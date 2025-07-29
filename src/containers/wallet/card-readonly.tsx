@@ -1,16 +1,16 @@
 "use client";
 
+import OrderCard from "@/components/orderCard";
 import CardBar from "@/components/wallet/CardBar";
-import TxRow from "@/components/wallet/TxRow";
 import { useIsScrolled } from "@/hooks/scroll";
 import { useThemeUpdater } from "@/hooks/theme";
 import { useFocusEffect } from "@/hooks/useFocusEffect";
 import { useScrollableWindowFetcher } from "@/hooks/useScrollableWindow";
 import { useAccount } from "@/state/account/actions";
-import { selectOrderedLogs } from "@/state/account/selectors";
+import { useOrders } from "@/state/orders/actions";
 import { useProfiles } from "@/state/profiles/actions";
 import { getBaseUrl } from "@/utils/deeplink";
-import { CommunityConfig, Config, ConfigToken } from "@citizenwallet/sdk";
+import { CommunityConfig, Config } from "@citizenwallet/sdk";
 import { Flex, Text } from "@radix-ui/themes";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -31,7 +31,7 @@ export default function ReadOnly({
   serialNumber,
   project,
   cardColor,
-  tokenAddress,
+  tokenAddress
 }: ContainerProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -45,7 +45,6 @@ export default function ReadOnly({
     [communityConfig, tokenAddress]
   );
 
-  console.log("token", token);
 
   const isScrolled = useIsScrolled();
 
@@ -53,6 +52,7 @@ export default function ReadOnly({
 
   const [state, actions] = useAccount(baseUrl, config);
   const [profilesState, profilesActions] = useProfiles(config);
+  const [ordersState, ordersActions] = useOrders(baseUrl);
 
   useThemeUpdater(community, cardColor);
 
@@ -61,22 +61,25 @@ export default function ReadOnly({
   }, [accountAddress, actions]);
 
   const account = state((state) => state.account);
+  const orders = ordersState((state) => state.orders);
+  const loadingOrders = ordersState((state) => state.loading);
+
+
 
   useEffect(() => {
     (async () => {
       if (account) {
-        console.log("fetching transfers", account, token.address);
         await actions.getTransfers(account, token.address, true);
+        await ordersActions.loadOrders(account, token.address);
         setLoading(false);
       }
     })();
-  }, [account, actions, token.address]);
+  }, [account, actions, ordersActions, token.address]);
 
   useFocusEffect(() => {
     let unsubscribe: () => void | undefined;
 
     if (account) {
-      console.log("fetching balance", account, token.address);
       profilesActions.loadProfile(account);
       actions.fetchBalance(token.address);
       unsubscribe = actions.listen(account, token.address);
@@ -103,35 +106,24 @@ export default function ReadOnly({
     [serialNumber, project, router]
   );
 
-  const fetchMoreTransfers = useCallback(async () => {
-    if (!account) return false;
-    return actions.getTransfers(account, token.address);
-  }, [actions, account, token]);
 
-  const scrollableRef = useScrollableWindowFetcher(fetchMoreTransfers);
+
+  const fetchMoreOrders = useCallback(async () => {
+    if (!account) return false;
+    return ordersActions.getOrders(account, token.address);
+  }, [ordersActions, account, token]);
+
+  const scrollableRef = useScrollableWindowFetcher(fetchMoreOrders);
 
   const balance = state((state) => state.balance);
-  const logs = state(selectOrderedLogs);
   const profile = profilesState((state) => state.profiles[account]);
-  const profiles = profilesState((state) => state.profiles);
 
   return (
     <main
       ref={scrollableRef}
       className="relative flex min-h-screen w-full flex-col align-center p-4 max-w-xl"
     >
-      {/* <Link
-        href={`/profile/${account}`}
-        className="z-20 absolute right-0 top-0"
-      >
-        <Avatar className="h-11 w-11 m-4 border-2 border-primary">
-          <AvatarImage
-            src={getAvatarUrl(profile?.image_small, account)}
-            alt="profile image"
-          />
-          <AvatarFallback>{!profile ? "PRF" : profile.username}</AvatarFallback>
-        </Avatar>
-      </Link> */}
+
 
       <CardBar
         readonly
@@ -146,8 +138,8 @@ export default function ReadOnly({
         onTokenChange={handleTokenChange}
       />
 
-      <Flex direction="column" className="w-full pt-[440px]" gap="3">
-        {!loading && logs.length === 0 && (
+      <Flex direction="column" className="w-full pt-[490px]" gap="3">
+        {!loadingOrders && orders.length === 0 && (
           <Flex
             justify="center"
             align="center"
@@ -165,7 +157,7 @@ export default function ReadOnly({
             <Text>No transactions yet</Text>
           </Flex>
         )}
-        {loading && logs.length === 0 && (
+        {loadingOrders && orders.length === 0 && (
           <Flex
             justify="center"
             align="center"
@@ -176,17 +168,15 @@ export default function ReadOnly({
             <Loader2 className="animate-spin" />
           </Flex>
         )}
-        {logs.map((tx) => (
-          <TxRow
-            key={tx.hash}
+
+        {orders.length > 0 && orders.map((order) => (
+          <OrderCard
+            key={order.id}
+            data={order}
             token={token}
-            community={community}
-            account={account}
-            tx={tx}
-            actions={profilesActions}
-            profiles={profiles}
           />
         ))}
+
       </Flex>
     </main>
   );
