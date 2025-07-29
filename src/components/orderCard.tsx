@@ -6,6 +6,7 @@ import { ConfigToken } from "@citizenwallet/sdk";
 import { Flex, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import { useMemo } from "react";
+import getStatusBadge from "./getStatusBadge";
 
 interface MenuItem {
     id: number;
@@ -80,30 +81,8 @@ export default function OrderCard({
     }, [data.created_at]);
 
 
-    const getStatusBadge = () => {
-        switch (data.status.toLowerCase()) {
-            case 'refund':
-            case 'refunded':
-                return (
-                    <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
-                        Refunded
-                    </Badge>
-                );
-            case 'pending':
-                return (
-                    <Badge variant="secondary" className="bg-gray-100 text-gray-800 border-gray-200">
-                        Pending
-                    </Badge>
-                );
-            default:
-                return null;
-        }
-    };
-
     const hasItems = data.items && data.items.length > 0;
     const hasDescription = data.description && data.description.trim() !== "";
-
-
 
 
     return (
@@ -181,7 +160,7 @@ export default function OrderCard({
                 <Flex direction="column" justify="start" align="end" gap="2" className="min-w-[120px]">
 
                     <div className="flex justify-end">
-                        {getStatusBadge()}
+                        {getStatusBadge(data)}
                     </div>
 
 
