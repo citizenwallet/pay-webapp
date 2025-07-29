@@ -1,11 +1,13 @@
 "use server";
 
+import { OrderData } from "@/components/orderCard";
+
 export async function loadOrders(
   account: string,
   tokenAddress: string,
   limit: number = 10,
   offset: number = 0
-) {
+): Promise<{ orders: OrderData[]; total: number }> {
   if (!process.env.NEXT_PUBLIC_CHECKOUT_URL) {
     throw new Error("NEXT_PUBLIC_CHECKOUT_URL is not set");
   }
@@ -25,9 +27,5 @@ export async function loadOrders(
 
   const data = await response.json();
 
-  return {
-    ok: response.ok,
-    status: response.status,
-    ...data,
-  };
+  return { orders: data.orders, total: data.total };
 }

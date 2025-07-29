@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { OrdersState, useOrdersStore, OrdersPaginationMetadata } from "./state";
 import { StoreApi, UseBoundStore } from "zustand";
-import { loadOrders } from "./load";
+import { loadOrders } from "@/services/orders";
 
 const RELOAD_INTERVAL = 30000;
 
@@ -63,10 +63,6 @@ export class OrdersActions {
         nextOffset
       );
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch orders: ${response.status}`);
-      }
-
       const orders = response.orders || [];
       this.previousFetchLength = orders.length;
 
@@ -74,7 +70,7 @@ export class OrdersActions {
       this.ordersPagination = {
         offset: nextOffset,
         limit: this.fetchLimit,
-        total: response.total || 0,
+        total: response.orders.length || 0,
         hasMore: orders.length === this.fetchLimit,
       };
 
