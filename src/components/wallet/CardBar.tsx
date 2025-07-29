@@ -1,12 +1,3 @@
-import { Box, Flex, Text } from "@radix-ui/themes";
-import { Config, CommunityConfig, Profile } from "@citizenwallet/sdk";
-import WalletAction from "./Action";
-import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
-import SendModal from "@/containers/wallet/SendModal";
-import ReceiveModal from "@/containers/wallet/ReceiveModal";
-import { AccountLogic } from "@/state/account/actions";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
 import {
   Select,
   SelectContent,
@@ -14,7 +5,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState, useMemo } from "react";
+import { cn } from "@/lib/utils";
+import { AccountLogic } from "@/state/account/actions";
+import { CommunityConfig, Config, Profile } from "@citizenwallet/sdk";
+import { Flex, Text } from "@radix-ui/themes";
+import Image from "next/image";
+import { useMemo } from "react";
+import WalletAction from "./Action";
 
 interface ActionBarProps {
   readonly?: boolean;
@@ -172,25 +169,7 @@ export default function ActionBar({
           small ? "pt-2 pb-4 pr-4" : "pt-4 pr-4"
         )}
       >
-        {!readonly && (
-          <SendModal config={config} accountActions={accountActions}>
-            <WalletAction
-              compact={small}
-              icon={<ArrowUpIcon size={small ? 30 : 40} />}
-              label="Send"
-            />
-          </SendModal>
-        )}
 
-        {!readonly && (
-          <ReceiveModal token={token} communityConfig={communityConfig}>
-            <WalletAction
-              compact={small}
-              icon={<ArrowDownIcon size={small ? 30 : 40} />}
-              label="Receive"
-            />
-          </ReceiveModal>
-        )}
 
         {plugins
           .filter((plugin) =>
