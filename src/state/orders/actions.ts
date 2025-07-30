@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { OrdersState, useOrdersStore, OrdersPaginationMetadata } from "./state";
 import { StoreApi, UseBoundStore } from "zustand";
 import { loadOrders } from "@/services/orders";
+import { OrderData } from "@/components/orderCard";
 
 const RELOAD_INTERVAL = 30000;
 
@@ -108,6 +109,31 @@ export class OrdersActions {
     this.lastLoadedOrders[cacheKey] = new Date().getTime();
 
     await this.getOrders(account, tokenAddress, true);
+  }
+
+  /**
+   * Set the selected order
+   */
+  setSelectedOrder(order: OrderData | null) {
+    this.state.setSelectedOrder(order);
+  }
+
+  /**
+   * Get an order by ID from the current orders list
+   */
+  getOrderById(orderId: string | number): OrderData | undefined {
+    const id = typeof orderId === "string" ? parseInt(orderId) : orderId;
+    return this.state.orders.find((order) => order.id === id);
+  }
+
+  /**
+   * Set selected order by ID
+   */
+  setSelectedOrderById(orderId: string | number) {
+    const order = this.getOrderById(orderId);
+    if (order) {
+      this.setSelectedOrder(order);
+    }
   }
 
   clear() {

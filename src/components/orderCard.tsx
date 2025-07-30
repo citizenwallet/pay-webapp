@@ -7,6 +7,8 @@ import { Flex, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import { useMemo } from "react";
 import getStatusBadge from "./getStatusBadge";
+import { useOrders } from "@/state/orders/actions";
+import { getBaseUrl } from "@/utils/deeplink";
 
 interface MenuItem {
     id: number;
@@ -69,6 +71,8 @@ export default function OrderCard({
     token,
     profile
 }: OrderCardProps) {
+    // Get the orders actions to set selected order
+    const [, ordersActions] = useOrders(getBaseUrl());
 
     const formattedDate = useMemo(() => {
         return new Date(data.created_at).toLocaleDateString('en-US', {
@@ -80,13 +84,16 @@ export default function OrderCard({
         });
     }, [data.created_at]);
 
-
     const hasItems = data.items && data.items.length > 0;
     const hasDescription = data.description && data.description.trim() !== "";
 
+    const handleOrderClick = () => {
+        // Set the selected order when clicked
+        ordersActions.setSelectedOrder(data);
+    };
 
     return (
-        <Link href={`/order/${data.id}`}>
+        <Link href={`/order/${data.id}`} onClick={handleOrderClick}>
             <Flex
                 justify="start"
                 align="start"

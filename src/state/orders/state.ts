@@ -11,6 +11,7 @@ export interface OrdersPaginationMetadata {
 export interface OrdersState {
   loading: boolean;
   orders: OrderData[];
+  selectedOrder: OrderData | null;
   error: string | null;
   pagination?: OrdersPaginationMetadata;
   startLoading: () => void;
@@ -18,6 +19,7 @@ export interface OrdersState {
   setOrders: (orders: OrderData[]) => void;
   appendOrders: (orders: OrderData[]) => void;
   replaceOrders: (orders: OrderData[]) => void;
+  setSelectedOrder: (order: OrderData | null) => void;
   setPagination: (pagination: OrdersPaginationMetadata) => void;
   setError: (error: string | null) => void;
   clear: () => void;
@@ -25,6 +27,7 @@ export interface OrdersState {
 
 const initialState = () => ({
   orders: [],
+  selectedOrder: null,
   loading: false,
   error: null,
   pagination: undefined,
@@ -40,6 +43,7 @@ export const useOrdersStore = create<OrdersState>((set) => ({
       orders: [...state.orders, ...newOrders],
     })),
   replaceOrders: (orders) => set({ orders }),
+  setSelectedOrder: (selectedOrder) => set({ selectedOrder }),
   setPagination: (pagination) => set({ pagination }),
   setError: (error) => set({ error, loading: false }),
   clear: () => set(initialState()),

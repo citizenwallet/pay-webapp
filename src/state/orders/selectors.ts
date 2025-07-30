@@ -18,6 +18,10 @@ export const selectOrdersSortedByDate = (state: OrdersState) => {
   );
 };
 
+export const selectSelectedOrder = (state: OrdersState) => {
+  return state.selectedOrder;
+};
+
 export const selectOrdersPagination = (state: OrdersState) => {
   return state.pagination;
 };
