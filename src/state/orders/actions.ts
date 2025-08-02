@@ -1,0 +1,159 @@
+import { useMemo } from "react";
+import { OrdersState, useOrdersStore, OrdersPaginationMetadata } from "./state";
+import { StoreApi, UseBoundStore } from "zustand";
+import { loadOrders } from "@/services/orders";
+import { OrderData } from "@/components/orderCard";
+
+const RELOAD_INTERVAL = 30000;
+
+export class OrdersActions {
+  state: OrdersState;
+  baseUrl: string;
+
+  constructor(state: OrdersState, baseUrl: string) {
+    this.state = state;
+    this.baseUrl = baseUrl;
+  }
+
+  private fetchLimit = 10;
+  private ordersPagination?: OrdersPaginationMetadata;
+  private previousFetchLength = 0;
+  private fetchedOffsets: number[] = [];
+  private lastLoadedOrders: { [key: string]: number } = {};
+
+  /**
+   * Retrieves orders for a given account and token.
+   *
+   * @param account - The account address to fetch orders for
+   * @param tokenAddress - The token address to filter orders by
+   * @param reset - Indicates whether to reset the state before fetching orders
+   * @returns A promise that resolves to a boolean indicating whether more orders are available
+   */
+  async getOrders(
+    account: string,
+    tokenAddress?: string,
+    reset = false
+  ): Promise<boolean> {
+    try {
+      if (reset) {
+        this.ordersPagination = undefined;
+        this.previousFetchLength = 0;
+        this.fetchedOffsets = [];
+      }
+
+      if (this.ordersPagination && this.previousFetchLength < this.fetchLimit) {
+        // nothing more to fetch
+        return false;
+      }
+
+      const nextOffset = this.ordersPagination
+        ? this.ordersPagination.offset + this.fetchLimit
+        : 0;
+
+      if (this.fetchedOffsets.includes(nextOffset)) {
+        return false;
+      }
+      this.fetchedOffsets.push(nextOffset);
+
+      this.state.startLoading();
+
+      const response = await loadOrders(
+        account,
+        tokenAddress || "",
+        this.fetchLimit,
+        nextOffset
+      );
+
+      const orders = response.orders || [];
+      this.previousFetchLength = orders.length;
+
+      // Create pagination metadata
+      this.ordersPagination = {
+        offset: nextOffset,
+        limit: this.fetchLimit,
+        total: response.orders.length || 0,
+        hasMore: orders.length === this.fetchLimit,
+      };
+
+      this.state.setPagination(this.ordersPagination);
+
+      if (reset) {
+        this.state.replaceOrders(orders);
+      } else {
+        this.state.appendOrders(orders);
+      }
+
+      this.state.stopLoading();
+      return this.ordersPagination.hasMore;
+    } catch (error) {
+      console.error("Error loading orders:", error);
+      this.state.setError(
+        error instanceof Error ? error.message : "Failed to load orders"
+      );
+      this.state.stopLoading();
+      return false;
+    }
+  }
+
+  /**
+   * Load orders with caching similar to profiles
+   */
+  async loadOrders(account: string, tokenAddress?: string) {
+    const cacheKey = `${account}-${tokenAddress}`;
+    if (this.lastLoadedOrders[cacheKey]) {
+      const now = new Date().getTime();
+      if (now - this.lastLoadedOrders[cacheKey] < RELOAD_INTERVAL) {
+        return;
+      }
+    }
+    this.lastLoadedOrders[cacheKey] = new Date().getTime();
+
+    await this.getOrders(account, tokenAddress, true);
+  }
+
+  /**
+   * Set the selected order
+   */
+  setSelectedOrder(order: OrderData | null) {
+    this.state.setSelectedOrder(order);
+  }
+
+  /**
+   * Get an order by ID from the current orders list
+   */
+  getOrderById(orderId: string | number): OrderData | undefined {
+    const id = typeof orderId === "string" ? parseInt(orderId) : orderId;
+    return this.state.orders.find((order) => order.id === id);
+  }
+
+  /**
+   * Set selected order by ID
+   */
+  setSelectedOrderById(orderId: string | number) {
+    const order = this.getOrderById(orderId);
+    if (order) {
+      this.setSelectedOrder(order);
+    }
+  }
+
+  clear() {
+    this.state.clear();
+    this.ordersPagination = undefined;
+    this.previousFetchLength = 0;
+    this.fetchedOffsets = [];
+    this.lastLoadedOrders = {};
+  }
+}
+
+export const useOrders = (
+  baseUrl: string
+): [UseBoundStore<StoreApi<OrdersState>>, OrdersActions] => {
+  const ordersStore = useOrdersStore;
+
+  const actions = useMemo(
+    () => new OrdersActions(ordersStore.getState(), baseUrl),
+    [ordersStore, baseUrl]
+  );
+
+  return [ordersStore, actions];
+};
