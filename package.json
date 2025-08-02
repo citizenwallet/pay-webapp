@@ -9,8 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test-watch": "jest --watch",
-    "enable-provider": "tsx scripts/enable-provider.ts"
+    "test-watch": "jest --watch"
   },
   "dependencies": {
     "@citizenwallet/sdk": "^2.0.106",

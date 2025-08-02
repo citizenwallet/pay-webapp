@@ -7,6 +7,8 @@ import { getCommunityFromHeaders } from "@/services/config";
 import { headers } from "next/headers";
 import { getColors } from "@/utils/colors";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
+import Image from "next/image";
+import AnonymousButton from "./anonymous-button";
 
 interface PageProps {
   params: Promise<{
@@ -15,6 +17,7 @@ interface PageProps {
   searchParams: Promise<{
     project?: string;
     community?: string; // mistake when ordering cards, it is = project
+    token?: string;
   }>;
 }
 
@@ -29,7 +32,7 @@ export default async function ClaimCardPage(props: PageProps) {
   const communityConfig = new CommunityConfig(config);
 
   const { serialNumber } = await props.params;
-  const { project, community } = await props.searchParams;
+  const { project, community, token } = await props.searchParams;
 
   const cardColor =
     ColorMappingOverrides[project ?? community ?? "default"] ??
@@ -39,16 +42,32 @@ export default async function ClaimCardPage(props: PageProps) {
   const colors = getColors(cardColor);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100">
+    <div
+      className="min-h-screen bg-gradient-to-br"
+      style={{
+        background: `linear-gradient(to bottom right, ${colors.lighter}, ${colors.light})`,
+      }}
+    >
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-orange-200">
+      <header
+        className="bg-white shadow-sm border-b"
+        style={{ borderColor: colors.light }}
+      >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <Shield className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+                <Image
+                  src="/logo.png"
+                  alt="coin"
+                  width={24}
+                  height={24}
+                  className="h-5 w-5 text-blue-600"
+                />
               </div>
-              <h1 className="text-xl font-bold text-orange-900">La CLASS</h1>
+              <h1 className="text-xl font-bold" style={{ color: colors.text }}>
+                Brussels Pay
+              </h1>
             </div>
           </div>
         </div>
@@ -57,29 +76,58 @@ export default async function ClaimCardPage(props: PageProps) {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Tag className="w-10 h-10 text-white" />
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
+            style={{ backgroundColor: colors.primary }}
+          >
+            <Image
+              src="/nfc.png"
+              alt="coin"
+              width={24}
+              height={24}
+              className="h-10 w-10 "
+            />
           </div>
-          <h2 className="text-3xl font-bold text-orange-900 mb-4">Welcome!</h2>
-          <p className="text-lg text-orange-700 mb-2 max-w-md mx-auto">
-            You&apos;ve scanned a new La CLASS card
+          <h2
+            className="text-3xl font-bold mb-4"
+            style={{ color: colors.text }}
+          >
+            Welcome!
+          </h2>
+          <p
+            className="text-lg mb-2 max-w-md mx-auto"
+            style={{ color: colors.textLight }}
+          >
+            You&apos;ve scanned a new card
           </p>
-          <p className="text-sm text-orange-600 max-w-sm mx-auto">
+          <p
+            className="text-sm max-w-sm mx-auto"
+            style={{ color: colors.textLight }}
+          >
             Choose how you&apos;d like to use your card
           </p>
         </div>
 
         {/* Option 1: Claim with Brussels Pay */}
-        <Card className="max-w-md mx-auto mb-6 border-2 border-orange-300 shadow-lg bg-gradient-to-br from-white to-orange-50">
+        <Card
+          className="max-w-md mx-auto mb-6 border-2 shadow-lg bg-gradient-to-br from-white to-gray-50"
+          style={{ borderColor: colors.light }}
+        >
           <CardContent className="p-6">
             <div className="text-center mb-4">
-              <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                style={{ backgroundColor: colors.primary }}
+              >
                 <Shield className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-orange-900 mb-2">
+              <h3
+                className="text-xl font-semibold mb-2"
+                style={{ color: colors.text }}
+              >
                 Claim Your Card
               </h3>
-              <p className="text-orange-700 text-sm mb-4">
+              <p className="text-sm mb-4" style={{ color: colors.textLight }}>
                 Secure your card with the Brussels Pay app
               </p>
             </div>
@@ -87,26 +135,29 @@ export default async function ClaimCardPage(props: PageProps) {
             <div className="space-y-3 mb-6">
               <div className="flex items-center space-x-3">
                 <Lock className="w-5 h-5 text-green-600 flex-shrink-0" />
-                <span className="text-sm text-orange-800">
+                <span className="text-sm" style={{ color: colors.text }}>
                   Secure with PIN code
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Tag className="w-5 h-5 text-green-600 flex-shrink-0" />
-                <span className="text-sm text-orange-800">
+                <span className="text-sm" style={{ color: colors.text }}>
                   Give your card a custom name
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Shield className="w-5 h-5 text-green-600 flex-shrink-0" />
-                <span className="text-sm text-orange-800">
+                <span className="text-sm" style={{ color: colors.text }}>
                   Enhanced security features
                 </span>
               </div>
             </div>
 
             <div className="space-y-3">
-              <p className="text-sm font-medium text-orange-900 text-center mb-3">
+              <p
+                className="text-sm font-medium text-center mb-3"
+                style={{ color: colors.text }}
+              >
                 Download Brussels Pay:
               </p>
 
@@ -139,24 +190,39 @@ export default async function ClaimCardPage(props: PageProps) {
 
         {/* Divider */}
         <div className="flex items-center justify-center my-6">
-          <div className="border-t border-orange-300 flex-1 max-w-20"></div>
-          <span className="px-4 text-sm text-orange-600 bg-orange-50 rounded-full">
+          <div
+            className="border-t flex-1 max-w-20"
+            style={{ borderColor: colors.light }}
+          ></div>
+          <span
+            className="px-4 text-sm rounded-full"
+            style={{ color: colors.textLight, backgroundColor: colors.lighter }}
+          >
             or
           </span>
-          <div className="border-t border-orange-300 flex-1 max-w-20"></div>
+          <div
+            className="border-t flex-1 max-w-20"
+            style={{ borderColor: colors.light }}
+          ></div>
         </div>
 
         {/* Option 2: Use Anonymously */}
-        <Card className="max-w-md mx-auto mb-8 border-orange-200 shadow-lg">
+        <Card
+          className="max-w-md mx-auto mb-8 shadow-lg"
+          style={{ borderColor: colors.light }}
+        >
           <CardContent className="p-6">
             <div className="text-center mb-4">
               <div className="w-16 h-16 bg-gray-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <User className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-orange-900 mb-2">
+              <h3
+                className="text-xl font-semibold mb-2"
+                style={{ color: colors.text }}
+              >
                 Use Anonymously
               </h3>
-              <p className="text-orange-700 text-sm mb-4">
+              <p className="text-sm mb-4" style={{ color: colors.textLight }}>
                 Start using your card right away without registration
               </p>
             </div>
@@ -164,34 +230,37 @@ export default async function ClaimCardPage(props: PageProps) {
             <div className="space-y-3 mb-6">
               <div className="flex items-center space-x-3">
                 <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <span className="text-sm text-orange-800">
+                <span className="text-sm" style={{ color: colors.text }}>
                   No registration required
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <span className="text-sm text-orange-800">
+                <span className="text-sm" style={{ color: colors.text }}>
                   Start using immediately
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <span className="text-sm text-orange-800">
+                <span className="text-sm" style={{ color: colors.text }}>
                   Basic card functionality
                 </span>
               </div>
             </div>
 
-            <Button className="w-full bg-gray-600 hover:bg-gray-700 text-white">
-              Continue Anonymously
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            <AnonymousButton
+              colors={colors}
+              serialNumber={serialNumber}
+              token={token}
+              project={project}
+              community={community}
+            />
           </CardContent>
         </Card>
 
         {/* Info Section */}
         <div className="max-w-md mx-auto">
-          <Card className="border-blue-200 bg-blue-50">
+          <Card className="bg-blue-50" style={{ borderColor: colors.light }}>
             <CardContent className="p-4">
               <div className="flex items-start space-x-3">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -213,13 +282,16 @@ export default async function ClaimCardPage(props: PageProps) {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-orange-200 mt-12">
+      <footer
+        className="bg-white border-t mt-12"
+        style={{ borderColor: colors.light }}
+      >
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
-            <p className="text-sm text-orange-600 mb-2">
+            <p className="text-sm mb-2" style={{ color: colors.textLight }}>
               La Caisse Locale d&apos;Alimentation Solidaire de Schaerbeek
             </p>
-            <p className="text-xs text-orange-500">
+            <p className="text-xs" style={{ color: colors.primary }}>
               Supporting our community through local food solidarity
             </p>
           </div>
