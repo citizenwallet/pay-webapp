@@ -112,13 +112,6 @@ export default function ReadOnly({
     [serialNumber, project, router]
   );
 
-  const handleSelectOrder = useCallback(
-    (order: OrderData) => {
-      ordersActions.setSelectedOrder(order);
-    },
-    [ordersActions]
-  );
-
   const handleOrderRendered = useCallback(
     (order: OrderData) => {
       profilesActions.loadProfileFromUsername(order.place.slug);
@@ -185,7 +178,6 @@ export default function ReadOnly({
               data={order}
               token={token}
               profiles={profiles}
-              onSelectOrder={handleSelectOrder}
               onOrderRendered={handleOrderRendered}
             />
           ))}

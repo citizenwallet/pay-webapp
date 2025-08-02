@@ -65,7 +65,6 @@ interface OrderCardProps {
   data: OrderData;
   token: ConfigToken;
   profiles: { [key: string]: Profile };
-  onSelectOrder: (order: OrderData) => void;
   onOrderRendered: (order: OrderData) => void;
 }
 
@@ -73,7 +72,6 @@ export default function OrderCard({
   data,
   token,
   profiles,
-  onSelectOrder,
   onOrderRendered,
 }: OrderCardProps) {
   const formattedDate = useMemo(() => {
@@ -97,13 +95,8 @@ export default function OrderCard({
   const hasItems = data.items && data.items.length > 0;
   const hasDescription = data.description && data.description.trim() !== "";
 
-  const handleOrderClick = () => {
-    // Set the selected order when clicked
-    onSelectOrder(data);
-  };
-
   return (
-    <Link href={`/order/${data.id}`} onClick={handleOrderClick}>
+    <Link href={`/order/${data.id}`}>
       <Flex
         justify="start"
         align="start"

@@ -151,31 +151,6 @@ export class OrdersActions {
     await this.getOrders(account, tokenAddress, reset);
   }
 
-  /**
-   * Set the selected order
-   */
-  setSelectedOrder(order: OrderData | null) {
-    this.state.setSelectedOrder(order);
-  }
-
-  /**
-   * Get an order by ID from the current orders list
-   */
-  getOrderById(orderId: string | number): OrderData | undefined {
-    const id = typeof orderId === "string" ? parseInt(orderId) : orderId;
-    return this.state.orders.find((order) => order.id === id);
-  }
-
-  /**
-   * Set selected order by ID
-   */
-  setSelectedOrderById(orderId: string | number) {
-    const order = this.getOrderById(orderId);
-    if (order) {
-      this.setSelectedOrder(order);
-    }
-  }
-
   clear() {
     this.stopPolling();
     this.state.clear();
