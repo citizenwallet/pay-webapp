@@ -1,6 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shield, User, Lock, Tag, ArrowRight, Download } from "lucide-react";
+import {
+  Shield,
+  User,
+  Lock,
+  Tag,
+  ArrowRight,
+  Download,
+  Settings,
+} from "lucide-react";
 import Link from "next/link";
 import { CommunityConfig } from "@citizenwallet/sdk";
 import { getCommunityFromHeaders } from "@/services/config";
@@ -9,6 +17,7 @@ import { getColors } from "@/utils/colors";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
 import Image from "next/image";
 import AnonymousButton from "./anonymous-button";
+import SetupCardButton from "./setup-card-button";
 
 interface PageProps {
   params: Promise<{
@@ -108,7 +117,7 @@ export default async function ClaimCardPage(props: PageProps) {
           </p>
         </div>
 
-        {/* Option 1: Claim with Brussels Pay */}
+        {/* Option 1: Configure Card */}
         <Card
           className="max-w-md mx-auto mb-6 border-2 shadow-lg bg-gradient-to-br from-white to-gray-50"
           style={{ borderColor: colors.light }}
@@ -119,72 +128,41 @@ export default async function ClaimCardPage(props: PageProps) {
                 className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
                 style={{ backgroundColor: colors.primary }}
               >
-                <Shield className="w-8 h-8 text-white" />
+                <Settings className="w-8 h-8 text-white" />
               </div>
               <h3
                 className="text-xl font-semibold mb-2"
                 style={{ color: colors.text }}
               >
-                Claim Your Card
+                Setup Your Card
               </h3>
               <p className="text-sm mb-4" style={{ color: colors.textLight }}>
-                Secure your card with the Brussels Pay app
+                Open Brussels Pay to configure your card settings
               </p>
             </div>
 
             <div className="space-y-3 mb-6">
               <div className="flex items-center space-x-3">
-                <Lock className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Settings className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  Secure with PIN code
+                  Customize card settings
                 </span>
               </div>
               <div className="flex items-center space-x-3">
-                <Tag className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Shield className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  Give your card a custom name
+                  Set up security features
                 </span>
               </div>
               <div className="flex items-center space-x-3">
-                <Shield className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Tag className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  Enhanced security features
+                  Personalize your card
                 </span>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <p
-                className="text-sm font-medium text-center mb-3"
-                style={{ color: colors.text }}
-              >
-                Download Brussels Pay:
-              </p>
-
-              <div className="flex flex-col space-y-2">
-                <Link
-                  href="https://apps.apple.com/be/app/brussels-pay/id6742148784"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button className="w-full bg-black hover:bg-gray-800 text-white flex items-center justify-center space-x-2">
-                    <Download className="w-4 h-4" />
-                    <span>Download for iOS</span>
-                  </Button>
-                </Link>
-
-                <Link
-                  href="https://play.google.com/store/apps/details?id=brussels.pay.wallet2"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center space-x-2">
-                    <Download className="w-4 h-4" />
-                    <span>Download for Android</span>
-                  </Button>
-                </Link>
-              </div>
-            </div>
+            <SetupCardButton colors={colors} serialNumber={serialNumber} />
           </CardContent>
         </Card>
 
