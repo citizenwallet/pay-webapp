@@ -37,15 +37,12 @@ export default async function Page(props: PageProps) {
   }
 
   const cardColor =
-    ColorMappingOverrides[project ?? community ?? ""] ??
+    ColorMappingOverrides[project ?? community ?? "default"] ??
     communityConfig.community.theme?.primary ??
     "#272727";
 
   const tokenAddress =
     token ?? TokenMappingOverrides[project ?? community ?? "smile"];
-
-
-
 
   return (
     <>
