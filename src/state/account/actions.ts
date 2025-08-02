@@ -1,20 +1,10 @@
 import { useMemo } from "react";
 import { AccountState, useAccountStore } from "./state";
 import { StoreApi, UseBoundStore } from "zustand";
-import {
-  CommunityConfig,
-  Config,
-  LogsService,
-  ResponsePaginationMetadata as LogsPaginationMetadata,
-  QRFormat,
-  parseQRFormat,
-  tokenTransferEventTopic,
-} from "@citizenwallet/sdk";
+import { CommunityConfig, Config, LogsService } from "@citizenwallet/sdk";
 import { StorageService } from "@/services/storage";
 import { CWAccount } from "@/services/account";
-import { generateWalletHashV4 } from "@/services/account/urlAccount";
 import { formatUnits } from "ethers";
-import { generateAccountHashPath } from "@/utils/hash";
 
 export class AccountLogic {
   baseUrl: string;
@@ -27,7 +17,12 @@ export class AccountLogic {
   logsService: LogsService;
 
   account?: CWAccount;
-  constructor(baseUrl: string, state: AccountState, config: Config) {
+  constructor(
+    baseUrl: string,
+    state: AccountState,
+    config: Config,
+    accountAddress: string
+  ) {
     this.baseUrl = baseUrl;
     this.state = state;
     this.config = config;
@@ -36,90 +31,9 @@ export class AccountLogic {
     this.storage = new StorageService(config.community.alias);
 
     this.logsService = new LogsService(this.communityConfig);
-  }
 
-  async getAccount(accountAddress: string) {
     this.state.setAccount(accountAddress);
     this.account = new CWAccount(this.config, accountAddress);
-  }
-
-  async openAccount(
-    hash: string,
-    createAccountCallback: (hashPath: string) => void
-  ) {
-    
-    const format = parseQRFormat(hash);
-
-    let accountHash: string | null = hash;
-    if (!accountHash || format !== QRFormat.unsupported) {
-      accountHash = this.storage.getKey("hash");
-      if (!accountHash) {
-        this.createAccount(createAccountCallback);
-        return;
-      }
-    }
-
-    try {
-      const walletPassword = process.env.NEXT_PUBLIC_WEB_BURNER_PASSWORD;
-      if (!walletPassword) {
-        throw new Error("Wallet password not set");
-      }
-
-      this.account = await CWAccount.fromHash(
-        this.baseUrl,
-        accountHash,
-        walletPassword,
-        this.config
-      );
-      if (!this.account) {
-        throw new Error("Invalid wallet format");
-      }
-
-      this.storage.setKey("hash", accountHash);
-
-      this.state.setAccount(this.account.account);
-      this.state.setOwner(true);
-
-      createAccountCallback(accountHash);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async createAccount(createAccountCallback: (hashPath: string) => void) {
-    try {
-      const walletPassword = process.env.NEXT_PUBLIC_WEB_BURNER_PASSWORD;
-      if (!walletPassword) {
-        throw new Error("Wallet password not set");
-      }
-
-      this.account = await CWAccount.random(this.config);
-
-      if (!this.account.signer) {
-        throw new Error("Signer not found");
-      }
-
-      const hash = await generateWalletHashV4(
-        this.account.account,
-        this.communityConfig,
-        this.account.signer,
-        walletPassword
-      );
-
-      const hashPath = generateAccountHashPath(
-        hash,
-        this.config.community.alias
-      );
-
-      this.storage.setKey("hash", hashPath);
-
-      this.state.setAccount(this.account.account);
-      this.state.setOwner(true);
-
-      createAccountCallback(hashPath);
-    } catch (e) {
-      console.error(e);
-    }
   }
 
   async fetchBalance(_token?: string) {
@@ -143,179 +57,6 @@ export class AccountLogic {
     } catch (error) {}
   }
 
-  private listenerInterval: ReturnType<typeof setInterval> | undefined;
-  private listenMaxDate = new Date();
-  private listenerFetchLimit = 10;
-
-  listen(account: string, _token?: string) {
-    const token = this.communityConfig.getToken(_token);
-
-    try {
-      if (this.listenerInterval) {
-        clearInterval(this.listenerInterval);
-      }
-
-      this.listenerInterval = setInterval(async () => {
-        const data = {
-          from: account,
-        };
-        const orData = {
-          to: account,
-        };
-
-        const params = {
-          fromDate: this.listenMaxDate.toISOString(),
-          limit: this.listenerFetchLimit,
-          offset: 0,
-          data,
-          orData,
-        };
-
-        const { array: logs = [] } = await this.logsService.getNewLogs(
-          token.address,
-          tokenTransferEventTopic,
-          params
-        );
-
-        if (logs.length > 0) {
-          // new items, move the max date to the latest one
-          this.listenMaxDate = new Date();
-        }
-
-        if (logs.length === 0) {
-          // nothing new to add
-          return;
-        }
-
-        this.fetchBalance(token.address);
-
-        // new items, add them to the store
-        this.state.putLogs(logs);
-      }, 1000);
-
-      return () => {
-        clearInterval(this.listenerInterval);
-      };
-    } catch (_) {}
-    return () => {};
-  }
-
-  async fetchInitialTransfers(account: string, _token?: string) {
-    const token = this.communityConfig.getToken(_token);
-    try {
-      const params = {
-        maxDate: new Date("10/06/2024").toISOString(),
-        limit: 10,
-        offset: 0,
-      };
-
-      const { array: logs } = await this.logsService.getLogs(
-        token.address,
-        account,
-        params
-      );
-
-      this.state.putLogs(logs);
-    } catch (error) {}
-  }
-
-  private fetchMaxDate = new Date();
-  private fetchLimit = 10;
-  private logsPagination?: LogsPaginationMetadata;
-  private previousFetchLength = 0;
-  private fetchedOffsets: number[] = [];
-
-  /**
-   * Retrieves transfers for a given address.
-   *
-   * @param address - The address for which to retrieve transfers.
-   * @param reset - Indicates whether to reset the state before fetching transfers.
-   * @returns A promise that resolves to a boolean indicating whether the transfers were successfully retrieved.
-   */
-  async getTransfers(
-    account: string,
-    _token?: string,
-    reset = false
-  ): Promise<boolean> {
-    const token = this.communityConfig.getToken(_token);
-    try {
-      if (reset) {
-        this.fetchMaxDate = new Date();
-        this.logsPagination = undefined;
-        this.previousFetchLength = 0;
-        this.fetchedOffsets = [];
-      }
-
-      if (this.logsPagination && this.previousFetchLength < this.fetchLimit) {
-        // nothing more to fetch
-        return false;
-      }
-
-      const nextOffset = this.logsPagination
-        ? this.logsPagination.offset + this.fetchLimit
-        : 0;
-      if (this.fetchedOffsets.includes(nextOffset)) {
-        return false;
-      }
-      this.fetchedOffsets.push(nextOffset);
-
-      const data = {
-        from: account,
-      };
-      const orData = {
-        to: account,
-      };
-
-      const params = {
-        maxDate: this.fetchMaxDate.toISOString(),
-        limit: this.fetchLimit,
-        offset: nextOffset,
-        data,
-        orData,
-      };
-
-      const logs = await this.logsService.getLogs(
-        token.address,
-        tokenTransferEventTopic,
-        params
-      );
-
-      this.logsPagination = logs.meta;
-      this.previousFetchLength = logs.array.length;
-
-      if (reset) {
-        this.state.replaceLogs(logs.array);
-        return true;
-      }
-
-      this.state.appendLogs(logs.array);
-      return true;
-    } catch (error) {}
-
-    return false;
-  }
-
-  async send(
-    token: string,
-    to: string,
-    amount: string,
-    description?: string
-  ): Promise<string | null> {
-    try {
-      if (!this.account) {
-        throw new Error("Account not set");
-      }
-
-      const tx = await this.account.send(token, to, amount, description);
-
-      return tx;
-    } catch (error) {
-      console.error(error);
-    }
-
-    return null;
-  }
-
   clear() {
     this.state.clear();
   }
@@ -323,13 +64,15 @@ export class AccountLogic {
 
 export const useAccount = (
   baseUrl: string,
-  config: Config
+  config: Config,
+  accountAddress: string
 ): [UseBoundStore<StoreApi<AccountState>>, AccountLogic] => {
   const sendStore = useAccountStore;
 
   const actions = useMemo(
-    () => new AccountLogic(baseUrl, sendStore.getState(), config),
-    [baseUrl, sendStore, config]
+    () =>
+      new AccountLogic(baseUrl, sendStore.getState(), config, accountAddress),
+    [baseUrl, sendStore, config, accountAddress]
   );
 
   return [sendStore, actions];

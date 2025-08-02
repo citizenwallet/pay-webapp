@@ -55,9 +55,23 @@ export class ProfilesActions {
     this.state.stopLoading();
   }
 
+  private lastLoadedProfileFromUsername: { [key: string]: number } = {};
   async loadProfileFromUsername(username: string) {
     try {
       this.state.startLoading();
+
+      if (this.lastLoadedProfileFromUsername[username]) {
+        const now = new Date().getTime();
+        if (
+          now - this.lastLoadedProfileFromUsername[username] <
+          RELOAD_INTERVAL
+        ) {
+          return;
+        }
+      }
+      this.lastLoadedProfileFromUsername[username] = new Date().getTime();
+
+      console.log("loading profile from username", username);
 
       const ipfsDomain = this.communityConfig.ipfs.url.replace("https://", "");
 

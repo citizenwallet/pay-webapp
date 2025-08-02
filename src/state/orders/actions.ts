@@ -9,6 +9,7 @@ const RELOAD_INTERVAL = 30000;
 export class OrdersActions {
   state: OrdersState;
   baseUrl: string;
+  private pollingInterval?: NodeJS.Timeout;
 
   constructor(state: OrdersState, baseUrl: string) {
     this.state = state;
@@ -20,6 +21,40 @@ export class OrdersActions {
   private previousFetchLength = 0;
   private fetchedOffsets: number[] = [];
   private lastLoadedOrders: { [key: string]: number } = {};
+
+  /**
+   * Starts polling for the last 10 orders every 2 seconds
+   * @param account - The account address to fetch orders for
+   * @param tokenAddress - Optional token address to filter orders by
+   * @returns An unsubscribe function to stop polling
+   */
+  listen(account: string, tokenAddress?: string): () => void {
+    // Clear any existing polling
+    this.stopPolling();
+
+    // Initial fetch
+    this.getOrders(account, tokenAddress, true);
+
+    // Start polling every 2 seconds
+    this.pollingInterval = setInterval(() => {
+      this.getOrders(account, tokenAddress);
+    }, 2000);
+
+    // Return unsubscribe function
+    return () => {
+      this.stopPolling();
+    };
+  }
+
+  /**
+   * Stops the polling interval
+   */
+  private stopPolling(): void {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = undefined;
+    }
+  }
 
   /**
    * Retrieves orders for a given account and token.
@@ -98,8 +133,13 @@ export class OrdersActions {
   /**
    * Load orders with caching similar to profiles
    */
-  async loadOrders(account: string, tokenAddress?: string) {
+  async loadOrders(account: string, tokenAddress?: string, reset = false) {
     const cacheKey = `${account}-${tokenAddress}`;
+
+    if (reset) {
+      this.lastLoadedOrders[cacheKey] = 0;
+    }
+
     if (this.lastLoadedOrders[cacheKey]) {
       const now = new Date().getTime();
       if (now - this.lastLoadedOrders[cacheKey] < RELOAD_INTERVAL) {
@@ -108,7 +148,7 @@ export class OrdersActions {
     }
     this.lastLoadedOrders[cacheKey] = new Date().getTime();
 
-    await this.getOrders(account, tokenAddress, true);
+    await this.getOrders(account, tokenAddress, reset);
   }
 
   /**
@@ -137,6 +177,7 @@ export class OrdersActions {
   }
 
   clear() {
+    this.stopPolling();
     this.state.clear();
     this.ordersPagination = undefined;
     this.previousFetchLength = 0;

@@ -29,3 +29,24 @@ export async function loadOrders(
 
   return { orders: data.orders, total: data.total };
 }
+
+export async function getOrderById(id: string): Promise<OrderData | null> {
+  try {
+    if (!process.env.NEXT_PUBLIC_CHECKOUT_URL) {
+      throw new Error("NEXT_PUBLIC_CHECKOUT_URL is not set");
+    }
+
+    // Build URL with pagination parameters
+    const url = new URL(
+      `${process.env.NEXT_PUBLIC_CHECKOUT_URL}/api/v1/app/orders/${id}`
+    );
+
+    const response = await fetch(url.toString());
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    return null;
+  }
+}

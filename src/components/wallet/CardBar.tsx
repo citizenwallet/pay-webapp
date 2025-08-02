@@ -81,7 +81,7 @@ export default function ActionBar({
       >
         <div className="absolute top-4 left-4 flex flex-col gap-2 animate-fade-in">
           <Text size="2" weight="bold" className="text-white">
-            {profile?.username ? `@${profile?.username}` : "anonymous"}
+            {profile?.username ? profile?.username : "anonymous"}
           </Text>
           {profile?.name && (
             <Text size="2" weight="bold" className="text-white">
@@ -169,8 +169,6 @@ export default function ActionBar({
           small ? "pt-2 pb-4 pr-4" : "pt-4 pr-4"
         )}
       >
-
-
         {plugins
           .filter((plugin) =>
             plugin.token_address ? plugin.token_address === token.address : true
