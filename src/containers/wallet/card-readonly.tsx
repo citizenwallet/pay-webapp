@@ -176,6 +176,7 @@ export default function ReadOnly({
             <OrderCard
               key={order.id}
               data={order}
+              project={project}
               token={token}
               profiles={profiles}
               onOrderRendered={handleOrderRendered}

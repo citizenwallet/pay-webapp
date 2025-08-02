@@ -63,6 +63,7 @@ export interface OrderData {
 
 interface OrderCardProps {
   data: OrderData;
+  project?: string;
   token: ConfigToken;
   profiles: { [key: string]: Profile };
   onOrderRendered: (order: OrderData) => void;
@@ -70,6 +71,7 @@ interface OrderCardProps {
 
 export default function OrderCard({
   data,
+  project,
   token,
   profiles,
   onOrderRendered,
@@ -95,8 +97,13 @@ export default function OrderCard({
   const hasItems = data.items && data.items.length > 0;
   const hasDescription = data.description && data.description.trim() !== "";
 
+  let link = `/order/${data.id}?token=${token.address}`;
+  if (project) {
+    link += `&project=${project}`;
+  }
+
   return (
-    <Link href={`/order/${data.id}`}>
+    <Link href={link}>
       <Flex
         justify="start"
         align="start"
