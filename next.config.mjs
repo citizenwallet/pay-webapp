@@ -34,6 +34,11 @@ const nextConfig = {
         hostname: "assets.citizenwallet.xyz",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "*.pay.brussels",
+        port: "",
+      },
     ],
   },
 };
