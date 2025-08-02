@@ -120,18 +120,7 @@ export default function ReadOnly({
       ref={scrollableRef}
       className="relative flex min-h-screen w-full flex-col align-center p-4 max-w-xl"
     >
-      {/* <Link
-        href={`/profile/${account}`}
-        className="z-20 absolute right-0 top-0"
-      >
-        <Avatar className="h-11 w-11 m-4 border-2 border-primary">
-          <AvatarImage
-            src={getAvatarUrl(profile?.image_small, account)}
-            alt="profile image"
-          />
-          <AvatarFallback>{!profile ? "PRF" : profile.username}</AvatarFallback>
-        </Avatar>
-      </Link> */}
+
 
       <CardBar
         readonly
