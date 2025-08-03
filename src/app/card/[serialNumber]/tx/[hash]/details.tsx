@@ -1,36 +1,31 @@
 "use client";
 
-import { OrderData } from "@/components/orderCard";
+import { OrderData } from "@/components/tx-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { getAvatarUrl } from "@/lib/utils";
+import { ATransaction } from "@/services/pay/transactions";
+import { formatAddress } from "@/utils/formatting";
 import { Profile } from "@citizenwallet/sdk";
 import { Flex, Text } from "@radix-ui/themes";
-import {
-  ArrowLeft,
-  Calendar,
-  DollarSign,
-  FileText,
-  Package,
-} from "lucide-react";
+import { ArrowLeft, Calendar, FileText, Package } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-interface OrderDetailPageProps {
+interface DetailsPageProps {
   tokenLogo: string;
-  order: OrderData;
+  transaction: ATransaction;
+  order?: OrderData;
   profile: Profile;
   orderDate: string;
 }
 
-export default function OrderDetailPage({
+export default function DetailsPage({
   tokenLogo,
-
+  transaction,
   order,
   profile,
   orderDate,
-}: OrderDetailPageProps) {
+}: DetailsPageProps) {
   const router = useRouter();
 
   const goBack = () => {
@@ -38,16 +33,19 @@ export default function OrderDetailPage({
   };
 
   const getItemNameById = (itemId: number) => {
-    if (!order.place?.items) return `Item ${itemId}`;
-    const placeItem = order.place.items.find((item) => item.id === itemId);
+    if (!order?.place?.items) return `Item ${itemId}`;
+    const placeItem = order?.place.items.find((item) => item.id === itemId);
     return placeItem?.name || `Item ${itemId}`;
   };
 
-  const getItemPriceById = (itemId: number) => {
-    if (!order.place?.items) return `Item ${itemId}`;
-    const placeItem = order.place.items.find((item) => item.id === itemId);
-    return placeItem?.price;
+  const getItemPriceById = (itemId: number): number => {
+    if (!order?.place?.items) return 0;
+    const placeItem = order?.place.items.find((item) => item.id === itemId);
+    return placeItem?.price ?? 0;
   };
+
+  const description =
+    order?.description.trim() ?? transaction.description.trim();
 
   return (
     <div className="relative flex min-h-screen w-full flex-col align-center p-4 max-w-xl">
@@ -64,15 +62,21 @@ export default function OrderDetailPage({
       <Card className="shadow-lg border-0">
         <CardHeader className="pb-4">
           <Flex direction="column" gap="4">
-            <Text size="6" weight="bold" className="text-gray-900">
-              Order #{order.id}
-            </Text>
+            {order ? (
+              <Text size="6" weight="bold" className="text-gray-900">
+                Order #{order.id}
+              </Text>
+            ) : (
+              <Text size="6" weight="bold" className="text-gray-900">
+                Transaction #{formatAddress(transaction.id)}
+              </Text>
+            )}
 
             <Flex align="center" gap="4" className="p-4 bg-gray-50 rounded-lg">
               <Avatar className="h-16 w-16 border-2 border-primary">
                 <AvatarImage
                   src={profile.image}
-                  alt={`${order.place?.slug || "Place"} profile`}
+                  alt="place profile"
                   className="object-cover"
                 />
                 <AvatarFallback className="text-lg font-semibold">
@@ -108,7 +112,7 @@ export default function OrderDetailPage({
                   Amount
                 </Text>
                 <Text size="5" weight="bold" className="text-blue-600">
-                  {(order.total / 100).toFixed(2)}
+                  {transaction.value}
                 </Text>
               </div>
             </div>
@@ -121,7 +125,9 @@ export default function OrderDetailPage({
                 <Text size="2" className="text-gray-600 block">
                   Status
                 </Text>
-                <div className="mt-1">{order.status}</div>
+                <div className="mt-1">
+                  {order?.status ?? transaction.status}
+                </div>
               </div>
             </div>
           </div>
@@ -140,7 +146,7 @@ export default function OrderDetailPage({
             </div>
           </div>
 
-          {order.items && order.items.length > 0 && (
+          {order?.items && order.items.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-gray-600" />
@@ -204,7 +210,7 @@ export default function OrderDetailPage({
             </div>
           )}
 
-          {order.description && order.description.trim() !== "" && (
+          {description && (
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-gray-600" />
@@ -214,7 +220,7 @@ export default function OrderDetailPage({
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
                 <Text size="3" className="text-gray-700 leading-relaxed">
-                  {order.description}
+                  {description}
                 </Text>
               </div>
             </div>

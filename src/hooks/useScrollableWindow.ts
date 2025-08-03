@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useRef } from "react";
+import { RefObject, useCallback, useEffect, useRef } from "react";
 import { delay } from "../utils/delay";
 import { useSafeEffect } from "@/hooks/useSafeEffect";
 import { getWindow } from "@/utils/window";
@@ -16,10 +16,16 @@ const FETCHER_THRESHOLD = 100;
 export const useScrollableWindowFetcher = (
   fetchFunction: () => Promise<boolean>,
   refetchDelay = 500
-): MutableRefObject<HTMLDivElement | null> => {
+): RefObject<HTMLDivElement | null> => {
   const elementRef = useRef<HTMLDivElement | null>(null);
+  const hasRunOnce = useRef(false);
 
   const fetchUntilScrollable = useCallback(async () => {
+    if (hasRunOnce.current) {
+      return;
+    }
+    hasRunOnce.current = true;
+
     const el = elementRef.current;
     const isScrollable = isWindowScrollable(el);
     if (!isScrollable) {
@@ -33,7 +39,8 @@ export const useScrollableWindowFetcher = (
     }
   }, [fetchFunction, refetchDelay]);
 
-  useSafeEffect(() => {
+  useEffect(() => {
+    console.log("useSafeEffect");
     fetchUntilScrollable();
 
     const scrollListener = () => {

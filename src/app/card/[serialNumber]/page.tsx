@@ -18,6 +18,7 @@ import { getCard } from "@/services/pay/cards";
 import { redirect } from "next/navigation";
 import SkeletonCard from "@/components/wallet/skeleton-card";
 import { getNavigationLink } from "@/utils/navigation-links";
+import { getTransactions } from "@/services/pay/transactions";
 
 interface PageProps {
   params: Promise<{
@@ -72,21 +73,11 @@ function Fallback({ cardColor, logo }: { cardColor: string; logo: string }) {
         />
         <Flex
           justify="center"
-          gap="8"
-          className={cn(
-            "w-full  max-w-5xl items-center justify-between text-sm",
-            "pt-4 pr-4"
-          )}
-        >
-          <Skeleton className="w-24 h-24 rounded-full" />
-        </Flex>
-        <Flex
-          justify="center"
           direction="column"
           gap="2"
           className={cn(
             "w-full  max-w-5xl items-center justify-between text-sm",
-            "pt-8 pr-4"
+            "pt-8 px-16"
           )}
         >
           <Skeleton className="w-full h-24 rounded-lg" />
@@ -149,29 +140,30 @@ async function AsyncPage(props: PageProps) {
 
   const { status, card } = await getCard(serialNumber);
 
-  if ((status !== 404 && status !== 200) || (card && card.owner !== null)) {
-    redirect(
-      getNavigationLink(serialNumber, {
-        project,
-        community,
-        token,
-        path: "/pin",
-      })
-    );
-  }
+  // if ((status !== 404 && status !== 200) || (card && card.owner !== null)) {
+  //   redirect(
+  //     getNavigationLink(serialNumber, {
+  //       project,
+  //       community,
+  //       token,
+  //       path: "/pin",
+  //     })
+  //   );
+  // }
+
+  const { transactions } = await getTransactions(address, tokenAddress, 10, 0);
 
   return (
-    <>
-      <CardReadOnly
-        config={config}
-        serialNumber={serialNumber}
-        project={project ?? community}
-        initialCardColor={cardColor}
-        accountAddress={address}
-        tokenAddress={tokenAddress}
-        initialProfile={profile ?? undefined}
-        initialBalance={formattedBalance}
-      />
-    </>
+    <CardReadOnly
+      config={config}
+      serialNumber={serialNumber}
+      project={project ?? community}
+      initialCardColor={cardColor}
+      accountAddress={address}
+      initialTransactions={transactions}
+      tokenAddress={tokenAddress}
+      initialProfile={profile ?? undefined}
+      initialBalance={formattedBalance}
+    />
   );
 }

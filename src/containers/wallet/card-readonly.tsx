@@ -1,24 +1,31 @@
 "use client";
 
-import OrderCard, { OrderData } from "@/components/orderCard";
-import CardBar from "@/components/wallet/card-bar";
+import OrderCard, { OrderData } from "@/components/tx-card";
+import { Skeleton } from "@/components/ui/skeleton";
+import Card from "@/components/wallet/card";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
 import { useIsScrolled } from "@/hooks/scroll";
 import { useThemeUpdater } from "@/hooks/theme";
 import { useFocusEffect } from "@/hooks/useFocusEffect";
 import { useScrollableWindowFetcher } from "@/hooks/useScrollableWindow";
+import { cn } from "@/lib/utils";
+import { ATransaction } from "@/services/pay/transactions";
 import { useAccount } from "@/state/account/actions";
 import { useOrders } from "@/state/orders/actions";
 import { useProfiles } from "@/state/profiles/actions";
+import { useTransactions } from "@/state/transactions/actions";
+import { getColors } from "@/utils/colors";
 import { getBaseUrl } from "@/utils/deeplink";
 import { CommunityConfig, Config, Profile } from "@citizenwallet/sdk";
 import { Flex, Text } from "@radix-ui/themes";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 interface ContainerProps {
   config: Config;
   accountAddress: string;
+  initialTransactions: ATransaction[];
   serialNumber: string;
   project?: string;
   initialCardColor: string;
@@ -30,6 +37,7 @@ interface ContainerProps {
 export default function ReadOnly({
   config,
   accountAddress,
+  initialTransactions = [],
   serialNumber,
   project,
   initialCardColor,
@@ -38,7 +46,7 @@ export default function ReadOnly({
   initialBalance,
 }: ContainerProps) {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(initialTransactions.length === 0);
   const [cardColor, setCardColor] = useState(initialCardColor);
 
   const { community } = config;
@@ -50,6 +58,14 @@ export default function ReadOnly({
     [communityConfig, tokenAddress]
   );
 
+  const topUpPlugin = useMemo(() => {
+    return communityConfig.getActionPlugin(
+      "topup",
+      token.address,
+      token.chain_id
+    );
+  }, [communityConfig, token.address, token.chain_id]);
+
   const isScrolled = useIsScrolled();
 
   const baseUrl = getBaseUrl();
@@ -57,30 +73,41 @@ export default function ReadOnly({
   const [state, actions] = useAccount(baseUrl, config, accountAddress);
   const [profilesState, profilesActions] = useProfiles(config);
   const [ordersState, ordersActions] = useOrders(baseUrl);
+  const [transactionsState, transactionsActions] = useTransactions(
+    baseUrl,
+    initialTransactions
+  );
 
   useThemeUpdater(community, cardColor);
 
-  const orders = ordersState((state) => state.orders);
-  const loadingOrders = ordersState((state) => state.loading);
+  const transactions = transactionsState((state) => state.transactions);
+  const loadingTransactions = transactionsState((state) => state.loading);
 
   useEffect(() => {
     (async () => {
       if (accountAddress) {
-        await ordersActions.loadOrders(accountAddress, token.address, true);
+        await transactionsActions.loadTransactions(
+          accountAddress,
+          token.address,
+          true
+        );
 
         const cardColor =
           ColorMappingOverrides[project ?? "default"] ??
           communityConfig.community.theme?.primary ??
           "#272727";
 
-        console.log(cardColor);
-        console.log(project);
-
         setCardColor(cardColor);
         setLoading(false);
       }
     })();
-  }, [accountAddress, ordersActions, token.address, project, communityConfig]);
+  }, [
+    accountAddress,
+    transactionsActions,
+    token.address,
+    project,
+    communityConfig,
+  ]);
 
   useFocusEffect(() => {
     let unsubscribe: () => void | undefined;
@@ -88,13 +115,19 @@ export default function ReadOnly({
     if (accountAddress) {
       profilesActions.loadProfile(accountAddress);
       actions.fetchBalance(token.address);
-      unsubscribe = ordersActions.listen(accountAddress, token.address);
+      unsubscribe = transactionsActions.listen(accountAddress, token.address);
     }
 
     return () => {
       unsubscribe?.();
     };
-  }, [profilesActions, actions, ordersActions, accountAddress, token.address]);
+  }, [
+    profilesActions,
+    actions,
+    transactionsActions,
+    accountAddress,
+    token.address,
+  ]);
 
   const handleTokenChange = useCallback(
     (tokenAddress: string) => {
@@ -107,22 +140,31 @@ export default function ReadOnly({
           ? `&token=${tokenAddress}`
           : `?token=${tokenAddress}`;
       }
+
+      setLoading(true);
       router.replace(path);
     },
     [serialNumber, project, router]
   );
 
-  const handleOrderRendered = useCallback(
-    (order: OrderData) => {
-      profilesActions.loadProfileFromUsername(order.place.slug);
+  const handleTopUp = useCallback(() => {
+    if (!topUpPlugin) return;
+
+    window.open(`${topUpPlugin.url}?account=${accountAddress}`, "_blank");
+  }, [topUpPlugin, accountAddress]);
+
+  const handleTxRendered = useCallback(
+    (tx: ATransaction) => {
+      profilesActions.loadProfile(tx.from);
+      ordersActions.loadOrderFromTxHash(tx.hash);
     },
     [profilesActions]
   );
 
   const fetchMoreOrders = useCallback(async () => {
     if (!accountAddress) return false;
-    return ordersActions.getOrders(accountAddress, token.address);
-  }, [ordersActions, accountAddress, token]);
+    return transactionsActions.getTransactions(accountAddress, token.address);
+  }, [transactionsActions, accountAddress, token]);
 
   const scrollableRef = useScrollableWindowFetcher(fetchMoreOrders);
 
@@ -131,58 +173,106 @@ export default function ReadOnly({
     (state) => state.profiles[accountAddress] ?? initialProfile
   );
 
+  const colors = getColors(cardColor);
+
   const profiles = profilesState((state) => state.profiles);
+  const orders = ordersState((state) => state.orders);
 
   return (
     <main
       ref={scrollableRef}
-      className="relative flex min-h-screen w-full flex-col align-center p-4 max-w-xl"
+      className="relative flex h-screen w-full flex-col justify-start items-center"
+      style={{
+        backgroundColor: colors.light,
+      }}
     >
-      <CardBar
-        readonly
-        small={isScrolled}
-        cardColor={cardColor}
-        profile={profile}
-        account={accountAddress}
-        balance={balance}
-        config={config}
-        accountActions={actions}
-        tokenAddress={token.address}
-        onTokenChange={handleTokenChange}
-      />
+      <div
+        className="w-full flex flex-col justify-start items-center"
+        style={{
+          backgroundColor: colors.light,
+        }}
+      >
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-xl z-50 flex justify-center items-center">
+          <Card
+            cardColor={cardColor}
+            profile={profile}
+            balance={balance}
+            small={isScrolled}
+            config={config}
+            tokenAddress={tokenAddress}
+            className="mt-12 mb-8"
+            onTokenChange={handleTokenChange}
+            onTopUp={topUpPlugin ? handleTopUp : undefined}
+          />
+        </div>
 
-      <Flex direction="column" className="w-full pt-[490px]" gap="3">
-        {!loadingOrders && orders.length === 0 && (
-          <Flex
-            justify="center"
-            align="center"
-            direction="column"
-            className="w-full max-w-full py-4 active:bg-muted rounded-lg transition-colors duration-500 ease-in-out bg-white"
-            gap="3"
-          >
-            <Image
-              src="/coins.png"
-              alt="card"
-              width={140}
-              height={140}
-              className="pb-8"
-            />
-            <Text>No transactions yet</Text>
-          </Flex>
-        )}
+        <Flex
+          direction="column"
+          align="center"
+          className="w-full max-w-xl pt-[400px] px-16 pb-16"
+          gap="3"
+        >
+          {!loadingTransactions && !loading && transactions.length === 0 && (
+            <Flex
+              justify="center"
+              align="center"
+              direction="column"
+              className="w-full max-w-full py-4 active:bg-muted rounded-lg transition-colors duration-500 ease-in-out "
+              gap="3"
+            >
+              <Image
+                src="/coins.png"
+                alt="card"
+                width={140}
+                height={140}
+                className="pb-8"
+              />
+              <Text>No transactions yet</Text>
+            </Flex>
+          )}
 
-        {orders.length > 0 &&
-          orders.map((order) => (
-            <OrderCard
-              key={order.id}
-              data={order}
-              project={project}
-              token={token}
-              profiles={profiles}
-              onOrderRendered={handleOrderRendered}
-            />
-          ))}
-      </Flex>
+          {loading && (
+            <Flex
+              justify="center"
+              direction="column"
+              gap="3"
+              className={cn(
+                "w-full items-center justify-between text-sm animate-fade-in"
+              )}
+            >
+              <Skeleton
+                className="w-full h-28 rounded-lg shadow-md transition-shadow border"
+                style={{ borderColor: colors.primary }}
+              />
+              <Skeleton
+                className="w-full h-28 rounded-lg shadow-md transition-shadow border"
+                style={{ borderColor: colors.primary }}
+              />
+              <Skeleton
+                className="w-full h-28 rounded-lg shadow-md transition-shadow border"
+                style={{ borderColor: colors.primary }}
+              />
+            </Flex>
+          )}
+
+          {loading ||
+            (transactions.length > 0 &&
+              transactions.map((transaction) => (
+                <OrderCard
+                  key={transaction.id}
+                  serialNumber={serialNumber}
+                  cardAddress={accountAddress}
+                  transaction={transaction}
+                  order={orders[transaction.hash]}
+                  colors={colors}
+                  project={project}
+                  token={token}
+                  profiles={profiles}
+                  onTxRendered={handleTxRendered}
+                />
+              )))}
+        </Flex>
+      </div>
     </main>
   );
 }

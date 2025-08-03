@@ -1,33 +1,21 @@
-import { OrderData } from "@/components/orderCard";
+import { OrderData } from "@/components/tx-card";
 import { create } from "zustand";
-
-export interface OrdersPaginationMetadata {
-  offset: number;
-  limit: number;
-  total: number;
-  hasMore: boolean;
-}
 
 export interface OrdersState {
   loading: boolean;
-  orders: OrderData[];
-  selectedOrder: OrderData | null;
+  orders: Record<string, OrderData>;
   error: string | null;
-  pagination?: OrdersPaginationMetadata;
   startLoading: () => void;
   stopLoading: () => void;
-  setOrders: (orders: OrderData[]) => void;
-  appendOrders: (orders: OrderData[]) => void;
-  replaceOrders: (orders: OrderData[]) => void;
-  setSelectedOrder: (order: OrderData | null) => void;
-  setPagination: (pagination: OrdersPaginationMetadata) => void;
+  setOrders: (orders: Record<string, OrderData>) => void;
+  addOrder: (order: OrderData) => void;
+  replaceOrders: (orders: Record<string, OrderData>) => void;
   setError: (error: string | null) => void;
   clear: () => void;
 }
 
 const initialState = () => ({
-  orders: [],
-  selectedOrder: null,
+  orders: {},
   loading: false,
   error: null,
   pagination: undefined,
@@ -38,13 +26,9 @@ export const useOrdersStore = create<OrdersState>((set) => ({
   startLoading: () => set({ loading: true, error: null }),
   stopLoading: () => set({ loading: false }),
   setOrders: (orders) => set({ orders }),
-  appendOrders: (newOrders) =>
-    set((state) => ({
-      orders: [...state.orders, ...newOrders],
-    })),
+  addOrder: (order) =>
+    set((state) => ({ orders: { ...state.orders, [order.tx_hash]: order } })),
   replaceOrders: (orders) => set({ orders }),
-  setSelectedOrder: (selectedOrder) => set({ selectedOrder }),
-  setPagination: (pagination) => set({ pagination }),
   setError: (error) => set({ error, loading: false }),
   clear: () => set(initialState()),
 }));

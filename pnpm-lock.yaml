@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@citizenwallet/sdk':
-        specifier: ^2.0.106
-        version: 2.0.113(@openzeppelin/contracts@5.4.0)(@types/react@19.1.8)
+        specifier: ^2.0.114
+        version: 2.0.114(@openzeppelin/contracts@5.4.0)(@types/react@19.1.8)
       '@radix-ui/react-avatar':
         specifier: ^1.1.10
         version: 1.1.10(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -296,8 +296,8 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@citizenwallet/sdk@2.0.113':
-    resolution: {integrity: sha512-rMKopnZAwyeBslukw/aT73hDV254Nk6gOOSjV9eiopt3804wDqnTeBKME+D6P6Mf9YzLz02h10lUWyIPQwqLXw==}
+  '@citizenwallet/sdk@2.0.114':
+    resolution: {integrity: sha512-n2oJNwPzuPDGk5ySjLOyAbCyRJ6pwU+p3G70xibO/CeKVsdelw7fBxRDw4ofV664w6J2zpk+DAWDHG2xm8VZKA==}
 
   '@emnapi/core@1.4.5':
     resolution: {integrity: sha512-XsLw1dEOpkSX/WucdqUhPWP7hDxSvZiY+fsUC14h+FtQ2Ifni4znbBt8punRX+Uj2JG/uDb8nEHVKvrVlvdZ5Q==}
@@ -4083,7 +4083,7 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@citizenwallet/sdk@2.0.113(@openzeppelin/contracts@5.4.0)(@types/react@19.1.8)':
+  '@citizenwallet/sdk@2.0.114(@openzeppelin/contracts@5.4.0)(@types/react@19.1.8)':
     dependencies:
       '@openzeppelin/contracts-upgradeable': 5.4.0(@openzeppelin/contracts@5.4.0)
       dotenv: 16.6.1

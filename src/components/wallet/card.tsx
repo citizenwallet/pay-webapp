@@ -6,8 +6,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { getColors } from "@/utils/colors";
 import { CommunityConfig, Config, Profile } from "@citizenwallet/sdk";
 import { Text } from "@radix-ui/themes";
+import { PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { useMemo } from "react";
 
@@ -20,6 +22,7 @@ interface CardProps {
   tokenAddress?: string;
   className?: string;
   onTokenChange?: (tokenAddress: string) => void;
+  onTopUp?: () => void;
 }
 
 export default function Card({
@@ -31,6 +34,7 @@ export default function Card({
   tokenAddress,
   className,
   onTokenChange,
+  onTopUp,
 }: CardProps) {
   const { community } = config;
   const communityConfig = new CommunityConfig(config);
@@ -47,6 +51,8 @@ export default function Card({
     onTokenChange?.(selectedTokenAddress);
   };
 
+  const colors = getColors(cardColor);
+
   return (
     <div
       className={cn(
@@ -55,8 +61,9 @@ export default function Card({
         "rounded-xl border border-white/80 shadow-[0_8px_16px_rgba(0,0,0,0.3)]",
         "animate-grow-bounce",
         "transition-all ease-in-out duration-200",
-        className,
-        small ? "w-[70%]" : "w-[80%]"
+        "w-[80%]",
+        small ? "opacity-80" : "opacity-100",
+        className
       )}
       style={{
         backgroundColor: cardColor,
@@ -80,7 +87,7 @@ export default function Card({
           )}
         </div>
         <Text size="2" weight="bold" className="text-white">
-          @{profile?.username ? profile?.username : "anonymous"}
+          {profile?.username ? profile?.username : "@anonymous"}
         </Text>
       </div>
       <div className="absolute top-4 right-4 animate-fade-in">
@@ -92,6 +99,21 @@ export default function Card({
           className="animate-fade-in"
         />
       </div>
+
+      {/* Top up button */}
+      {onTopUp && (
+        <div className="absolute bottom-6 left-4 animate-fade-in ">
+          <div
+            className="bg-white rounded-md p-2 flex items-center gap-2 cursor-pointer"
+            onClick={onTopUp}
+          >
+            <PlusIcon className="w-4 h-4" style={{ color: colors.text }} />
+            <Text size="4" weight="bold" style={{ color: colors.text }}>
+              add funds
+            </Text>
+          </div>
+        </div>
+      )}
 
       {/* Clickable balance section with token selector */}
       {balance && (
