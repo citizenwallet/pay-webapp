@@ -150,7 +150,10 @@ export default function ReadOnly({
   const handleTopUp = useCallback(() => {
     if (!topUpPlugin) return;
 
-    window.open(`${topUpPlugin.url}?account=${accountAddress}`, "_blank");
+    window.open(
+      `${topUpPlugin.url}?account=${accountAddress}&token=${token.address}`,
+      "_blank"
+    );
   }, [topUpPlugin, accountAddress]);
 
   const handleTxRendered = useCallback(
