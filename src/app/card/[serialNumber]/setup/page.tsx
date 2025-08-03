@@ -1,15 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  Shield,
-  User,
-  Lock,
-  Tag,
-  ArrowRight,
-  Download,
-  Settings,
-} from "lucide-react";
-import Link from "next/link";
+import { Shield, User, Tag, ArrowRight, Settings } from "lucide-react";
 import { CommunityConfig } from "@citizenwallet/sdk";
 import { getCommunityFromHeaders } from "@/services/config";
 import { headers } from "next/headers";
@@ -17,7 +7,10 @@ import { getColors } from "@/utils/colors";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
 import Image from "next/image";
 import AnonymousButton from "./anonymous-button";
-import SetupCardButton from "./setup-card-button";
+import SetupCardButton from "@/components/wallet/setup-card-button";
+import { getCard } from "@/services/pay/cards";
+import { redirect } from "next/navigation";
+import { getNavigationLink } from "@/utils/navigation-links";
 
 interface PageProps {
   params: Promise<{
@@ -49,6 +42,18 @@ export default async function ClaimCardPage(props: PageProps) {
     "#272727";
 
   const colors = getColors(cardColor);
+
+  const { card, status } = await getCard(serialNumber);
+  if (card !== null || status !== 404) {
+    redirect(
+      getNavigationLink(serialNumber, {
+        project,
+        community,
+        token,
+        path: "/pin",
+      })
+    );
+  }
 
   return (
     <div
@@ -267,10 +272,10 @@ export default async function ClaimCardPage(props: PageProps) {
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
             <p className="text-sm mb-2" style={{ color: colors.textLight }}>
-              La Caisse Locale d&apos;Alimentation Solidaire de Schaerbeek
+              Brussels Pay
             </p>
             <p className="text-xs" style={{ color: colors.primary }}>
-              Supporting our community through local food solidarity
+              Supporting our community through local payments
             </p>
           </div>
         </div>

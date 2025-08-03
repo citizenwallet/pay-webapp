@@ -8,9 +8,11 @@ import { useState } from "react";
 export default function SetupCardButton({
   colors,
   serialNumber,
+  label,
 }: {
   colors: Colors;
   serialNumber: string;
+  label?: string;
 }) {
   const [loading, setLoading] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
@@ -82,7 +84,7 @@ export default function SetupCardButton({
             onClick={handleSetupCard}
           >
             <Settings className="w-4 h-4 mr-2" />
-            Setup Card
+            {label ?? "Setup Card"}
           </Button>
         </div>
       </div>
@@ -105,7 +107,7 @@ export default function SetupCardButton({
       ) : (
         <Settings className="w-4 h-4 mr-2" />
       )}
-      Setup Card
+      {label ?? "Setup Card"}
     </Button>
   );
 }

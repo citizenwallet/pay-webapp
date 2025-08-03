@@ -41,7 +41,7 @@ export const getColors = (cardColor: string): Colors => {
     light: lightenColor(cardColor, 80),
     lighter: lightenColor(cardColor, 95),
     dark: lightenColor(cardColor, -30),
-    text: lightenColor(cardColor, -60),
-    textLight: lightenColor(cardColor, -40),
+    text: lightenColor(cardColor, -30),
+    textLight: lightenColor(cardColor, -100),
   };
 };

@@ -10,12 +10,14 @@ import {
 import { formatUnits, id } from "ethers";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
 import { TokenMappingOverrides } from "@/components/wallet/tokenMappingOverrides";
-import { OrderData } from "@/components/orderCard";
 import { Suspense } from "react";
-import { Flex, Text } from "@radix-ui/themes";
+import { Flex } from "@radix-ui/themes";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import Image from "next/image";
+import { getCard } from "@/services/pay/cards";
+import { redirect } from "next/navigation";
+import SkeletonCard from "@/components/wallet/skeleton-card";
+import { getNavigationLink } from "@/utils/navigation-links";
 
 interface PageProps {
   params: Promise<{
@@ -63,46 +65,11 @@ function Fallback({ cardColor, logo }: { cardColor: string; logo: string }) {
         direction="column"
         className="fixed z-50 top-0 bg-transparent-to-white-90 w-full max-w-xl items-center justify-between text-sm pr-4 pb-10"
       >
-        <div
-          className={cn(
-            "scale-[0.8] aspect-[1.59] mt-12 mr-4 mb-8 z-50 relative",
-            "flex items-start justify-start",
-            "rounded-xl border border-white/80 shadow-[0_8px_16px_rgba(0,0,0,0.3)]",
-            "w-[80%]"
-          )}
-          style={{
-            backgroundColor: cardColor,
-          }}
-        >
-          <div className="absolute top-4 left-4 flex flex-col gap-2 animate-fade-in">
-            <Skeleton className="w-24 h-4" />
-            <Skeleton className="w-24 h-4" />
-          </div>
-          <div className="absolute top-4 right-4 animate-fade-in">
-            <Image
-              src="/nfc.png"
-              alt="nfc"
-              width={24}
-              height={24}
-              className="animate-fade-in"
-            />
-          </div>
-
-          {/* Clickable balance section with token selector */}
-          <div className="absolute bottom-4 right-4 flex items-center justify-center text-white space-x-2 animate-fade-in">
-            <div className="flex items-center space-x-2">
-              <Image
-                src={logo}
-                alt="community logo"
-                width={48}
-                height={48}
-                className="rounded-full"
-              />
-              <Skeleton className="w-24 h-4" />
-              <div className="w-[4px]" />
-            </div>
-          </div>
-        </div>
+        <SkeletonCard
+          cardColor={cardColor}
+          logo={logo}
+          className="mt-12 mb-8"
+        />
         <Flex
           justify="center"
           gap="8"
@@ -178,6 +145,19 @@ async function AsyncPage(props: PageProps) {
     formattedBalance = parseInt(formattedBalance).toFixed(0);
   } else {
     formattedBalance = parseFloat(formattedBalance).toFixed(2);
+  }
+
+  const { status, card } = await getCard(serialNumber);
+
+  if ((status !== 404 && status !== 200) || (card && card.owner !== null)) {
+    redirect(
+      getNavigationLink(serialNumber, {
+        project,
+        community,
+        token,
+        path: "/pin",
+      })
+    );
   }
 
   return (

@@ -53,6 +53,7 @@ export default function ActionBar({
         small={small}
         config={config}
         tokenAddress={tokenAddress}
+        className="mt-12 mb-8"
         onTokenChange={onTokenChange}
       />
 

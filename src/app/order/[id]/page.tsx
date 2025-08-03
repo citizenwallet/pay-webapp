@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 import OrderDetailPage from "./OrderDetailPage";
 import OrderDetailFallback from "./fallback";
-import { getOrderById } from "@/services/orders";
+import { getOrderById } from "@/services/pay/orders";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";

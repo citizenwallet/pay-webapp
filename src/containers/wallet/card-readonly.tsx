@@ -1,7 +1,7 @@
 "use client";
 
 import OrderCard, { OrderData } from "@/components/orderCard";
-import CardBar from "@/components/wallet/CardBar";
+import CardBar from "@/components/wallet/card-bar";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
 import { useIsScrolled } from "@/hooks/scroll";
 import { useThemeUpdater } from "@/hooks/theme";

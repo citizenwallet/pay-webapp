@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { OrdersState, useOrdersStore, OrdersPaginationMetadata } from "./state";
 import { StoreApi, UseBoundStore } from "zustand";
-import { loadOrders } from "@/services/orders";
+import { loadOrders } from "@/services/pay/orders";
 import { OrderData } from "@/components/orderCard";
 
 const RELOAD_INTERVAL = 30000;
