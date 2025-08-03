@@ -59,7 +59,7 @@ async function AsyncPage({
             className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("back_to_orders")}
+            {t("back_to_transactions")}
           </Link>
         </div>
         <Card className="shadow-lg border-0">

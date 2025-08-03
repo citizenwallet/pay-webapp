@@ -139,7 +139,6 @@ async function AsyncPage(props: PageProps) {
   }
 
   const { status, card } = await getCard(serialNumber);
-
   // if ((status !== 404 && status !== 200) || (card && card.owner !== null)) {
   //   redirect(
   //     getNavigationLink(serialNumber, {

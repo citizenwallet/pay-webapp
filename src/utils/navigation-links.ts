@@ -1,25 +1,23 @@
-export const getNavigationLink = (
+export function getNavigationLink(
   serialNumber: string,
-  params:
-    | { project?: string; community?: string; token?: string; path?: string }
-    | undefined
-) => {
-  const { project, community, token, path } = params ?? {};
+  options: {
+    project?: string;
+    community?: string;
+    token?: string;
+    path?: string;
+    lang?: string;
+  } = {}
+): string {
+  const { project, community, token, path = "", lang } = options;
+  const params = new URLSearchParams();
 
-  let url = `/card/${serialNumber}`;
-  if (path) {
-    url += `${path}`;
-  }
-  if (project) {
-    url += url.includes("?") ? `&project=${project}` : `?project=${project}`;
-  }
-  if (community) {
-    url += url.includes("?")
-      ? `&community=${community}`
-      : `?community=${community}`;
-  }
-  if (token) {
-    url += url.includes("?") ? `&token=${token}` : `?token=${token}`;
-  }
-  return url;
-};
+  if (project) params.set("project", project);
+  if (community) params.set("community", community);
+  if (token) params.set("token", token);
+  if (lang) params.set("lang", lang);
+
+  const queryString = params.toString();
+  const basePath = `/card/${serialNumber}${path}`;
+
+  return queryString ? `${basePath}?${queryString}` : basePath;
+}

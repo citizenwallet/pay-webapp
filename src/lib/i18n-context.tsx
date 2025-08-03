@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getCurrentLanguage, setLanguage, type Language } from "./i18n";
+import { useSearchParams } from "next/navigation";
 
 interface LanguageContextType {
   language: Language;
@@ -13,6 +14,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 );
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const searchParams = useSearchParams();
   const [language, setLanguageState] = useState<Language>(getCurrentLanguage());
 
   const handleSetLanguage = (lang: Language) => {
@@ -21,6 +23,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    // Check for language parameter in URL first
+    const urlLang = searchParams.get("lang") as Language;
+    if (urlLang && ["en", "fr", "nl"].includes(urlLang)) {
+      setLanguage(urlLang);
+      setLanguageState(urlLang);
+      return;
+    }
+
     // Listen for language changes in localStorage
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "language") {
@@ -33,7 +43,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, [searchParams]);
 
   return (
     <LanguageContext.Provider

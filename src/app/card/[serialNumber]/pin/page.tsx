@@ -20,7 +20,7 @@ import SetupCardButton from "@/components/wallet/setup-card-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { redirect } from "next/navigation";
 import { getNavigationLink } from "@/utils/navigation-links";
-import { t } from "@/lib/i18n";
+import { tServer, getLanguageFromHeaders, Language } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{
@@ -30,11 +30,13 @@ interface PageProps {
     project?: string;
     community?: string;
     token?: string;
+    lang?: string;
   }>;
 }
 
 export default async function Page(props: PageProps) {
   const headersList = await headers();
+  const language = getLanguageFromHeaders(headersList);
 
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {
@@ -61,10 +63,11 @@ export default async function Page(props: PageProps) {
           cardColor={cardColor}
           logo={tokenConfig.logo}
           colors={colors}
+          language={language}
         />
       }
     >
-      <SecuredCardPage {...props} />
+      <SecuredCardPage {...props} language={language} />
     </Suspense>
   );
 }
@@ -73,10 +76,12 @@ function Fallback({
   cardColor,
   logo,
   colors,
+  language,
 }: {
   cardColor: string;
   logo?: string;
   colors: Colors;
+  language: Language;
 }) {
   return (
     <div
@@ -103,7 +108,7 @@ function Fallback({
                 />
               </div>
               <h1 className="text-xl font-bold" style={{ color: colors.text }}>
-                {t("brussels_pay")}
+                {tServer("brussels_pay", language)}
               </h1>
             </div>
           </div>
@@ -123,7 +128,7 @@ function Fallback({
             className="text-3xl font-bold mb-4"
             style={{ color: colors.text }}
           >
-            {t("card")}
+            {tServer("card", language)}
           </h2>
         </div>
 
@@ -146,32 +151,32 @@ function Fallback({
               className="text-lg font-semibold mb-4"
               style={{ color: colors.text }}
             >
-              {t("card_information")}
+              {tServer("card_information", language)}
             </h3>
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  {t("project")}
+                  {tServer("project", language)}
                 </span>
                 <Skeleton className="w-24 h-4" />
               </div>
 
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  {t("card_type")}
+                  {tServer("card_type", language)}
                 </span>
                 <span
                   className="text-sm font-medium"
                   style={{ color: colors.text }}
                 >
-                  {t("brussels_pay_nfc")}
+                  {tServer("brussels_pay_nfc", language)}
                 </span>
               </div>
 
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  {t("serial_number")}
+                  {tServer("serial_number", language)}
                 </span>
                 <Skeleton className="w-24 h-4" />
               </div>
@@ -185,7 +190,7 @@ function Fallback({
             className="text-sm text-center"
             style={{ color: colors.textLight }}
           >
-            {t("is_this_your_card")}
+            {tServer("is_this_your_card", language)}
           </p>
           <Skeleton className="w-2/3 h-10" />
         </div>
@@ -200,10 +205,10 @@ function Fallback({
                 </div>
                 <div>
                   <p className="text-sm font-medium text-blue-900 mb-1">
-                    {t("using_your_secured_card")}
+                    {tServer("using_your_secured_card", language)}
                   </p>
                   <p className="text-xs text-blue-700">
-                    {t("using_your_secured_card_description")}
+                    {tServer("using_your_secured_card_description", language)}
                   </p>
                 </div>
               </div>
@@ -220,10 +225,13 @@ function Fallback({
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
             <p className="text-sm mb-2" style={{ color: colors.textLight }}>
-              {t("brussels_pay")}
+              {tServer("brussels_pay", language)}
             </p>
             <p className="text-xs" style={{ color: colors.primary }}>
-              {t("supporting_our_community_through_local_payments")}
+              {tServer(
+                "supporting_our_community_through_local_payments",
+                language
+              )}
             </p>
           </div>
         </div>
@@ -232,7 +240,7 @@ function Fallback({
   );
 }
 
-async function SecuredCardPage(props: PageProps) {
+async function SecuredCardPage(props: PageProps & { language: Language }) {
   const headersList = await headers();
 
   const config = await getCommunityFromHeaders(headersList);
@@ -315,7 +323,7 @@ async function SecuredCardPage(props: PageProps) {
                 />
               </div>
               <h1 className="text-xl font-bold" style={{ color: colors.text }}>
-                {t("brussels_pay")}
+                {tServer("brussels_pay", props.language)}
               </h1>
             </div>
           </div>
@@ -335,7 +343,7 @@ async function SecuredCardPage(props: PageProps) {
             className="text-3xl font-bold mb-4"
             style={{ color: colors.text }}
           >
-            {t("card")}
+            {tServer("card", props.language)}
           </h2>
         </div>
 
@@ -359,13 +367,13 @@ async function SecuredCardPage(props: PageProps) {
               className="text-lg font-semibold mb-4"
               style={{ color: colors.text }}
             >
-              {t("card_information")}
+              {tServer("card_information", props.language)}
             </h3>
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  {t("project")}
+                  {tServer("project", props.language)}
                 </span>
                 <span
                   className="text-sm font-medium px-2 py-1 rounded-full bg-gray-100"
@@ -377,7 +385,7 @@ async function SecuredCardPage(props: PageProps) {
 
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  {t("card_type")}
+                  {tServer("card_type", props.language)}
                 </span>
                 <div
                   className="flex items-center space-x-2 px-2 py-1 rounded-full text-white"
@@ -392,7 +400,7 @@ async function SecuredCardPage(props: PageProps) {
 
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  {t("serial_number")}
+                  {tServer("serial_number", props.language)}
                 </span>
                 <span
                   className="text-sm font-medium"
@@ -404,7 +412,7 @@ async function SecuredCardPage(props: PageProps) {
 
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  {t("security")}
+                  {tServer("security", props.language)}
                 </span>
                 <div className="flex items-center space-x-2">
                   <Shield
@@ -416,8 +424,8 @@ async function SecuredCardPage(props: PageProps) {
                     style={{ color: colors.primary }}
                   >
                     {challenge === "pin" || challenge === "wrong-pin"
-                      ? "Pin"
-                      : "No pin"}
+                      ? tServer("pin", props.language)
+                      : tServer("no_pin", props.language)}
                   </span>
                 </div>
               </div>
@@ -425,7 +433,7 @@ async function SecuredCardPage(props: PageProps) {
               {cardOwnerProfile && (
                 <div className="flex justify-between items-center">
                   <span className="text-sm" style={{ color: colors.textLight }}>
-                    {t("owner")}
+                    {tServer("owner", props.language)}
                   </span>
                   <div className="flex items-center space-x-2 pl-1 pr-2 py-1 rounded-full bg-gray-100">
                     <Image
@@ -454,12 +462,12 @@ async function SecuredCardPage(props: PageProps) {
             className="text-sm text-center"
             style={{ color: colors.textLight }}
           >
-            {t("is_this_your_card")}
+            {tServer("is_this_your_card", props.language)}
           </p>
           <SetupCardButton
             colors={colors}
             serialNumber={serialNumber}
-            label="Import Card"
+            label={tServer("import_card", props.language)}
           />
         </div>
 
@@ -473,10 +481,13 @@ async function SecuredCardPage(props: PageProps) {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-blue-900 mb-1">
-                    {t("using_your_secured_card")}
+                    {tServer("using_your_secured_card", props.language)}
                   </p>
                   <p className="text-xs text-blue-700">
-                    {t("using_your_secured_card_description")}
+                    {tServer(
+                      "using_your_secured_card_description",
+                      props.language
+                    )}
                   </p>
                 </div>
               </div>
@@ -493,10 +504,13 @@ async function SecuredCardPage(props: PageProps) {
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
             <p className="text-sm mb-2" style={{ color: colors.textLight }}>
-              {t("brussels_pay")}
+              {tServer("brussels_pay", props.language)}
             </p>
             <p className="text-xs" style={{ color: colors.primary }}>
-              {t("supporting_our_community_through_local_payments")}
+              {tServer(
+                "supporting_our_community_through_local_payments",
+                props.language
+              )}
             </p>
           </div>
         </div>

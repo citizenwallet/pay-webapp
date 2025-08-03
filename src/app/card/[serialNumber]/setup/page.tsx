@@ -11,7 +11,7 @@ import SetupCardButton from "@/components/wallet/setup-card-button";
 import { getCard } from "@/services/pay/cards";
 import { redirect } from "next/navigation";
 import { getNavigationLink } from "@/utils/navigation-links";
-import { t } from "@/lib/i18n";
+import { getLanguageFromHeaders, t, tServer } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{
@@ -26,6 +26,7 @@ interface PageProps {
 
 export default async function ClaimCardPage(props: PageProps) {
   const headersList = await headers();
+  const language = getLanguageFromHeaders(headersList);
 
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {
@@ -45,16 +46,16 @@ export default async function ClaimCardPage(props: PageProps) {
   const colors = getColors(cardColor);
 
   const { card, status } = await getCard(serialNumber);
-  // if (card !== null || status !== 404) {
-  //   redirect(
-  //     getNavigationLink(serialNumber, {
-  //       project,
-  //       community,
-  //       token,
-  //       path: "/pin",
-  //     })
-  //   );
-  // }
+  if (card !== null || status !== 404) {
+    redirect(
+      getNavigationLink(serialNumber, {
+        project,
+        community,
+        token,
+        path: "/pin",
+      })
+    );
+  }
 
   return (
     <div
@@ -81,7 +82,7 @@ export default async function ClaimCardPage(props: PageProps) {
                 />
               </div>
               <h1 className="text-xl font-bold" style={{ color: colors.text }}>
-                {t("brussels_pay")}
+                {tServer("brussels_pay", language)}
               </h1>
             </div>
           </div>
@@ -107,19 +108,19 @@ export default async function ClaimCardPage(props: PageProps) {
             className="text-3xl font-bold mb-4"
             style={{ color: colors.text }}
           >
-            {t("welcome")}
+            {tServer("welcome", language)}
           </h2>
           <p
             className="text-lg mb-2 max-w-md mx-auto"
             style={{ color: colors.textLight }}
           >
-            {t("you_have_scanned_a_new_card")}
+            {tServer("you_have_scanned_a_new_card", language)}
           </p>
           <p
             className="text-sm max-w-sm mx-auto"
             style={{ color: colors.textLight }}
           >
-            {t("choose_how_you_would_like_to_use_your_card")}
+            {tServer("choose_how_you_would_like_to_use_your_card", language)}
           </p>
         </div>
 
@@ -140,10 +141,13 @@ export default async function ClaimCardPage(props: PageProps) {
                 className="text-xl font-semibold mb-2"
                 style={{ color: colors.text }}
               >
-                {t("setup_your_card")}
+                {tServer("setup_your_card", language)}
               </h3>
               <p className="text-sm mb-4" style={{ color: colors.textLight }}>
-                {t("open_brussels_pay_to_configure_your_card_settings")}
+                {tServer(
+                  "open_brussels_pay_to_configure_your_card_settings",
+                  language
+                )}
               </p>
             </div>
 
@@ -151,19 +155,19 @@ export default async function ClaimCardPage(props: PageProps) {
               <div className="flex items-center space-x-3">
                 <Settings className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  {t("customize_card_settings")}
+                  {tServer("customize_card_settings", language)}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Shield className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  {t("set_up_security_features")}
+                  {tServer("set_up_security_features", language)}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Tag className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  {t("personalize_your_card")}
+                  {tServer("personalize_your_card", language)}
                 </span>
               </div>
             </div>
@@ -182,7 +186,7 @@ export default async function ClaimCardPage(props: PageProps) {
             className="px-4 text-sm rounded-full"
             style={{ color: colors.textLight, backgroundColor: colors.lighter }}
           >
-            {t("or")}
+            {tServer("or", language)}
           </span>
           <div
             className="border-t flex-1 max-w-20"
@@ -204,10 +208,13 @@ export default async function ClaimCardPage(props: PageProps) {
                 className="text-xl font-semibold mb-2"
                 style={{ color: colors.text }}
               >
-                {t("use_anonymously")}
+                {tServer("use_anonymously", language)}
               </h3>
               <p className="text-sm mb-4" style={{ color: colors.textLight }}>
-                {t("start_using_your_card_right_away_without_registration")}
+                {tServer(
+                  "start_using_your_card_right_away_without_registration",
+                  language
+                )}
               </p>
             </div>
 
@@ -215,19 +222,19 @@ export default async function ClaimCardPage(props: PageProps) {
               <div className="flex items-center space-x-3">
                 <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  {t("no_registration_required")}
+                  {tServer("no_registration_required", language)}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  {t("start_using_immediately")}
+                  {tServer("start_using_immediately", language)}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  {t("basic_card_functionality")}
+                  {tServer("basic_card_functionality", language)}
                 </span>
               </div>
             </div>
@@ -252,11 +259,12 @@ export default async function ClaimCardPage(props: PageProps) {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-blue-900 mb-1">
-                    {t("good_to_know")}
+                    {tServer("good_to_know", language)}
                   </p>
                   <p className="text-xs text-blue-700">
-                    {t(
-                      "you_can_always_claim_your_card_later_through_the_brussels_pay_app_even_if_you_start_using_it_anonymously"
+                    {tServer(
+                      "you_can_always_claim_your_card_later_through_the_brussels_pay_app_even_if_you_start_using_it_anonymously",
+                      language
                     )}
                   </p>
                 </div>
@@ -274,10 +282,13 @@ export default async function ClaimCardPage(props: PageProps) {
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
             <p className="text-sm mb-2" style={{ color: colors.textLight }}>
-              {t("brussels_pay")}
+              {tServer("brussels_pay", language)}
             </p>
             <p className="text-xs" style={{ color: colors.primary }}>
-              {t("supporting_our_community_through_local_payments")}
+              {tServer(
+                "supporting_our_community_through_local_payments",
+                language
+              )}
             </p>
           </div>
         </div>

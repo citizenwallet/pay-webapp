@@ -5,6 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "@/lib/use-translation";
 import { cn } from "@/lib/utils";
 import { getColors } from "@/utils/colors";
 import { CommunityConfig, Config, Profile } from "@citizenwallet/sdk";
@@ -36,6 +37,7 @@ export default function Card({
   onTokenChange,
   onTopUp,
 }: CardProps) {
+  const { t } = useTranslation();
   const { community } = config;
   const communityConfig = new CommunityConfig(config);
   const token = communityConfig.getToken(tokenAddress);
@@ -109,7 +111,7 @@ export default function Card({
           >
             <PlusIcon className="w-4 h-4" style={{ color: colors.text }} />
             <Text size="4" weight="bold" style={{ color: colors.text }}>
-              add funds
+              {t("add_funds")}
             </Text>
           </div>
         </div>

@@ -16,10 +16,12 @@ const translations: LocaleData = {
     anonymous_username: "@anonymous",
 
     // Navigation & Actions
+    add_funds: "Add Funds",
     setup_card: "Setup Card",
     try_again: "Try again:",
     download_for_ios: "Download for iOS",
     download_for_android: "Download for Android",
+    back_to_transactions: "Back to Transactions",
 
     // Landing Page
     welcome_to_brussels_pay: "Welcome to Brussels Pay",
@@ -35,8 +37,14 @@ const translations: LocaleData = {
     // Transactions
     no_transactions_yet: "No transactions yet",
     order_number: "Order #{id}",
+    transaction_number: "Transaction #{id}",
     items: "Items:",
     description: "Description:",
+    amount: "Amount",
+    status: "Status",
+    order_date: "Order Date",
+    qty: "Qty: {count}",
+    total: "Total",
 
     // Setup
     use_anonymously: "Use Anonymously",
@@ -82,6 +90,9 @@ const translations: LocaleData = {
       "Your card is secured with a PIN. You can import it to your Brussels Pay app to manage your settings and view your transactions.",
     security: "Security",
     owner: "Owner",
+    import_card: "Import Card",
+    pin: "PIN",
+    no_pin: "No PIN",
 
     // Status
     item: "Item",
@@ -93,10 +104,12 @@ const translations: LocaleData = {
     anonymous_username: "@anonyme",
 
     // Navigation & Actions
+    add_funds: "Ajouter des fonds",
     setup_card: "Configurer la carte",
     try_again: "Réessayer :",
     download_for_ios: "Télécharger pour iOS",
     download_for_android: "Télécharger pour Android",
+    back_to_transactions: "Retour aux transactions",
 
     // Landing Page
     welcome_to_brussels_pay: "Bienvenue sur Brussels Pay",
@@ -114,8 +127,14 @@ const translations: LocaleData = {
     // Transactions
     no_transactions_yet: "Aucune transaction pour le moment",
     order_number: "Commande #{id}",
+    transaction_number: "Transaction #{id}",
     items: "Articles :",
     description: "Description :",
+    amount: "Montant",
+    status: "Statut",
+    order_date: "Date de commande",
+    qty: "Qté : {count}",
+    total: "Total",
 
     // Setup
     use_anonymously: "Utiliser anonymement",
@@ -162,6 +181,9 @@ const translations: LocaleData = {
       "Votre carte est sécurisée avec un code PIN. Vous pouvez l'importer dans votre application Brussels Pay pour gérer vos paramètres et consulter vos transactions.",
     security: "Sécurité",
     owner: "Propriétaire",
+    import_card: "Importer la carte",
+    pin: "PIN",
+    no_pin: "Aucun PIN",
 
     // Status
     item: "Article",
@@ -173,10 +195,12 @@ const translations: LocaleData = {
     anonymous_username: "@anoniem",
 
     // Navigation & Actions
+    add_funds: "Fonds toevoegen",
     setup_card: "Kaart instellen",
     try_again: "Opnieuw proberen:",
     download_for_ios: "Downloaden voor iOS",
     download_for_android: "Downloaden voor Android",
+    back_to_transactions: "Terug naar transacties",
 
     // Landing Page
     welcome_to_brussels_pay: "Welkom bij Brussels Pay",
@@ -193,8 +217,14 @@ const translations: LocaleData = {
     // Transactions
     no_transactions_yet: "Nog geen transacties",
     order_number: "Bestelling #{id}",
+    transaction_number: "Transactie #{id}",
     items: "Artikelen:",
     description: "Beschrijving:",
+    amount: "Bedrag",
+    status: "Status",
+    order_date: "Besteldatum",
+    qty: "Aantal: {count}",
+    total: "Totaal",
 
     // Setup
     use_anonymously: "Anoniem gebruiken",
@@ -240,6 +270,9 @@ const translations: LocaleData = {
       "Je kaart is beveiligd met een PIN. Je kunt hem importeren in je Brussels Pay app om je instellingen te beheren en je transacties te bekijken.",
     security: "Beveiliging",
     owner: "Eigenaar",
+    import_card: "Kaart importeren",
+    pin: "PIN",
+    no_pin: "Geen PIN",
 
     // Status
     item: "Artikel",
@@ -271,18 +304,30 @@ export function getCurrentLanguage(): Language {
   return getBrowserLanguage();
 }
 
+// Server-side language detection from headers
+export function getServerLanguage(headers: Headers): Language {
+  const acceptLanguage = headers.get("accept-language");
+  if (!acceptLanguage) return "en";
+
+  if (acceptLanguage.startsWith("fr")) return "fr";
+  if (acceptLanguage.startsWith("nl")) return "nl";
+
+  return "en";
+}
+
 // Set language
 export function setLanguage(lang: Language): void {
   if (typeof window === "undefined") return;
   localStorage.setItem("language", lang);
 }
 
-// Translation function
+// Translation function with optional language parameter for SSR
 export function t(
   key: string,
-  params?: Record<string, string | number>
+  params?: Record<string, string | number>,
+  language?: Language
 ): string {
-  const lang = getCurrentLanguage();
+  const lang = language || getCurrentLanguage();
   const translation =
     translations[lang]?.[key] || translations["en"]?.[key] || key;
 
@@ -291,4 +336,36 @@ export function t(
   return translation.replace(/\{(\w+)\}/g, (match, param) => {
     return String(params[param] || match);
   });
+}
+
+// Server-side translation function
+export function tServer(
+  key: string,
+  language: Language,
+  params?: Record<string, string | number>
+): string {
+  return t(key, params, language);
+}
+
+// Utility function to get language from search params
+export function getLanguageFromSearchParams(
+  searchParams: URLSearchParams
+): Language {
+  const lang = searchParams.get("lang") as Language;
+  if (lang && ["en", "fr", "nl"].includes(lang)) {
+    return lang;
+  }
+  return "en";
+}
+
+// Utility function to add language parameter to URL
+export function addLanguageToUrl(url: string, language: Language): string {
+  const urlObj = new URL(url, "http://localhost");
+  urlObj.searchParams.set("lang", language);
+  return urlObj.pathname + urlObj.search;
+}
+
+// Utility function to get language from headers for server-side rendering
+export function getLanguageFromHeaders(headers: Headers): Language {
+  return getServerLanguage(headers);
 }
