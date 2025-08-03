@@ -5,6 +5,7 @@ import { Colors } from "@/utils/colors";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getBaseUrl } from "@/utils/baseUrl";
+import { useTranslation } from "@/lib/use-translation";
 
 export default function AnonymousButton({
   colors,
@@ -19,6 +20,7 @@ export default function AnonymousButton({
   project?: string;
   community?: string;
 }) {
+  const { t } = useTranslation();
   const baseUrl = getBaseUrl();
   const router = useRouter();
 
@@ -52,7 +54,7 @@ export default function AnonymousButton({
       }
       onClick={handleClick}
     >
-      Continue Anonymously
+      {t("continue_anonymously")}
       <ArrowRight className="w-4 h-4 ml-2" />
     </Button>
   );

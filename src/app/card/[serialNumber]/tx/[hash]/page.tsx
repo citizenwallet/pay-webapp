@@ -16,6 +16,7 @@ import {
 } from "@citizenwallet/sdk";
 import { getTransaction } from "@/services/pay/transactions";
 import { id } from "ethers";
+import { t } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
 interface PageProps {
@@ -58,13 +59,13 @@ async function AsyncPage({
             className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Orders
+            {t("back_to_orders")}
           </Link>
         </div>
         <Card className="shadow-lg border-0">
           <CardContent className="p-8 text-center">
             <Text size="4" className="text-gray-600">
-              Order not found. Please go back and select an order from the list.
+              {t("order_not_found")}
             </Text>
           </CardContent>
         </Card>

@@ -11,6 +11,7 @@ import SetupCardButton from "@/components/wallet/setup-card-button";
 import { getCard } from "@/services/pay/cards";
 import { redirect } from "next/navigation";
 import { getNavigationLink } from "@/utils/navigation-links";
+import { t } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{
@@ -44,22 +45,22 @@ export default async function ClaimCardPage(props: PageProps) {
   const colors = getColors(cardColor);
 
   const { card, status } = await getCard(serialNumber);
-  if (card !== null || status !== 404) {
-    redirect(
-      getNavigationLink(serialNumber, {
-        project,
-        community,
-        token,
-        path: "/pin",
-      })
-    );
-  }
+  // if (card !== null || status !== 404) {
+  //   redirect(
+  //     getNavigationLink(serialNumber, {
+  //       project,
+  //       community,
+  //       token,
+  //       path: "/pin",
+  //     })
+  //   );
+  // }
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br"
+      className="min-h-screen w-full max-w-md mx-auto"
       style={{
-        background: `linear-gradient(to bottom right, ${colors.lighter}, ${colors.light})`,
+        backgroundColor: colors.light,
       }}
     >
       {/* Header */}
@@ -80,7 +81,7 @@ export default async function ClaimCardPage(props: PageProps) {
                 />
               </div>
               <h1 className="text-xl font-bold" style={{ color: colors.text }}>
-                Brussels Pay
+                {t("brussels_pay")}
               </h1>
             </div>
           </div>
@@ -106,19 +107,19 @@ export default async function ClaimCardPage(props: PageProps) {
             className="text-3xl font-bold mb-4"
             style={{ color: colors.text }}
           >
-            Welcome!
+            {t("welcome")}
           </h2>
           <p
             className="text-lg mb-2 max-w-md mx-auto"
             style={{ color: colors.textLight }}
           >
-            You&apos;ve scanned a new card
+            {t("you_have_scanned_a_new_card")}
           </p>
           <p
             className="text-sm max-w-sm mx-auto"
             style={{ color: colors.textLight }}
           >
-            Choose how you&apos;d like to use your card
+            {t("choose_how_you_would_like_to_use_your_card")}
           </p>
         </div>
 
@@ -139,10 +140,10 @@ export default async function ClaimCardPage(props: PageProps) {
                 className="text-xl font-semibold mb-2"
                 style={{ color: colors.text }}
               >
-                Setup Your Card
+                {t("setup_your_card")}
               </h3>
               <p className="text-sm mb-4" style={{ color: colors.textLight }}>
-                Open Brussels Pay to configure your card settings
+                {t("open_brussels_pay_to_configure_your_card_settings")}
               </p>
             </div>
 
@@ -150,19 +151,19 @@ export default async function ClaimCardPage(props: PageProps) {
               <div className="flex items-center space-x-3">
                 <Settings className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  Customize card settings
+                  {t("customize_card_settings")}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Shield className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  Set up security features
+                  {t("set_up_security_features")}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Tag className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  Personalize your card
+                  {t("personalize_your_card")}
                 </span>
               </div>
             </div>
@@ -181,7 +182,7 @@ export default async function ClaimCardPage(props: PageProps) {
             className="px-4 text-sm rounded-full"
             style={{ color: colors.textLight, backgroundColor: colors.lighter }}
           >
-            or
+            {t("or")}
           </span>
           <div
             className="border-t flex-1 max-w-20"
@@ -203,10 +204,10 @@ export default async function ClaimCardPage(props: PageProps) {
                 className="text-xl font-semibold mb-2"
                 style={{ color: colors.text }}
               >
-                Use Anonymously
+                {t("use_anonymously")}
               </h3>
               <p className="text-sm mb-4" style={{ color: colors.textLight }}>
-                Start using your card right away without registration
+                {t("start_using_your_card_right_away_without_registration")}
               </p>
             </div>
 
@@ -214,19 +215,19 @@ export default async function ClaimCardPage(props: PageProps) {
               <div className="flex items-center space-x-3">
                 <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  No registration required
+                  {t("no_registration_required")}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  Start using immediately
+                  {t("start_using_immediately")}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <ArrowRight className="w-5 h-5 text-blue-600 flex-shrink-0" />
                 <span className="text-sm" style={{ color: colors.text }}>
-                  Basic card functionality
+                  {t("basic_card_functionality")}
                 </span>
               </div>
             </div>
@@ -251,11 +252,12 @@ export default async function ClaimCardPage(props: PageProps) {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-blue-900 mb-1">
-                    Good to know
+                    {t("good_to_know")}
                   </p>
                   <p className="text-xs text-blue-700">
-                    You can always claim your card later through the Brussels
-                    Pay app, even if you start using it anonymously.
+                    {t(
+                      "you_can_always_claim_your_card_later_through_the_brussels_pay_app_even_if_you_start_using_it_anonymously"
+                    )}
                   </p>
                 </div>
               </div>
@@ -272,10 +274,10 @@ export default async function ClaimCardPage(props: PageProps) {
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
             <p className="text-sm mb-2" style={{ color: colors.textLight }}>
-              Brussels Pay
+              {t("brussels_pay")}
             </p>
             <p className="text-xs" style={{ color: colors.primary }}>
-              Supporting our community through local payments
+              {t("supporting_our_community_through_local_payments")}
             </p>
           </div>
         </div>

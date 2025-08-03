@@ -3,6 +3,7 @@
 import { OrderData } from "@/components/tx-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useTranslation } from "@/lib/use-translation";
 import { ATransaction } from "@/services/pay/transactions";
 import { formatAddress } from "@/utils/formatting";
 import { Profile } from "@citizenwallet/sdk";
@@ -26,6 +27,7 @@ export default function DetailsPage({
   profile,
   orderDate,
 }: DetailsPageProps) {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const goBack = () => {
@@ -55,7 +57,7 @@ export default function DetailsPage({
           className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Orders
+          {t("back_to_orders")}
         </div>
       </div>
 
@@ -64,11 +66,11 @@ export default function DetailsPage({
           <Flex direction="column" gap="4">
             {order ? (
               <Text size="6" weight="bold" className="text-gray-900">
-                Order #{order.id}
+                {t("order_number", { id: order.id })}
               </Text>
             ) : (
               <Text size="6" weight="bold" className="text-gray-900">
-                Transaction #{formatAddress(transaction.id)}
+                {t("transaction_number", { id: formatAddress(transaction.id) })}
               </Text>
             )}
 
@@ -109,7 +111,7 @@ export default function DetailsPage({
               </div>
               <div>
                 <Text size="2" className="text-gray-600 block">
-                  Amount
+                  {t("amount")}
                 </Text>
                 <Text size="5" weight="bold" className="text-blue-600">
                   {transaction.value}
@@ -123,7 +125,7 @@ export default function DetailsPage({
               </div>
               <div>
                 <Text size="2" className="text-gray-600 block">
-                  Status
+                  {t("status")}
                 </Text>
                 <div className="mt-1">
                   {order?.status ?? transaction.status}
@@ -138,7 +140,7 @@ export default function DetailsPage({
             </div>
             <div>
               <Text size="2" className="text-gray-600 block">
-                Order Date
+                {t("order_date")}
               </Text>
               <Text size="4" weight="medium" className="text-purple-600">
                 {orderDate}
@@ -151,7 +153,7 @@ export default function DetailsPage({
               <div className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-gray-600" />
                 <Text size="4" weight="bold" className="text-gray-900">
-                  Items ({order.items.length})
+                  {t("items", { count: order.items.length })}
                 </Text>
               </div>
               <div className="bg-gray-50 rounded-lg p-4 space-y-3">
@@ -165,7 +167,7 @@ export default function DetailsPage({
                         {getItemNameById(orderItem.id)}
                       </Text>
                       <Text size="2" className="text-gray-600 ml-4">
-                        Qty: {orderItem.quantity || 1}
+                        {t("qty", { count: orderItem.quantity || 1 })}
                       </Text>
                     </div>
                     <div className="flex items-center gap-2">
@@ -190,7 +192,7 @@ export default function DetailsPage({
                 <div className="border-t pt-3 mt-3">
                   <div className="flex justify-between items-center">
                     <Text size="4" weight="bold" className="text-gray-900">
-                      Total
+                      {t("total")}
                     </Text>
                     <div className="flex items-center gap-2">
                       <Image
@@ -215,7 +217,7 @@ export default function DetailsPage({
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-gray-600" />
                 <Text size="4" weight="bold" className="text-gray-900">
-                  Description
+                  {t("description")}
                 </Text>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">

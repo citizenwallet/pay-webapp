@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Colors } from "@/utils/colors";
 import { Settings, Download, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "@/lib/use-translation";
 
 export default function SetupCardButton({
   colors,
@@ -14,6 +15,7 @@ export default function SetupCardButton({
   serialNumber: string;
   label?: string;
 }) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
 
@@ -42,7 +44,7 @@ export default function SetupCardButton({
     return (
       <div className="space-y-3 animate-fade-in">
         <p className="text-sm text-center mb-3 text-orange-500">
-          Brussels Pay app not found. Download it to configure your card:
+          {t("brussels_pay_app_not_found")}
         </p>
         <div className="flex flex-col space-y-2">
           <a
@@ -52,7 +54,7 @@ export default function SetupCardButton({
           >
             <Button className="w-full bg-black hover:bg-gray-800 text-white flex items-center justify-center space-x-2">
               <Download className="w-4 h-4" />
-              <span>Download for iOS</span>
+              <span>{t("download_for_ios")}</span>
             </Button>
           </a>
           <a
@@ -62,7 +64,7 @@ export default function SetupCardButton({
           >
             <Button className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center space-x-2">
               <Download className="w-4 h-4" />
-              <span>Download for Android</span>
+              <span>{t("download_for_android")}</span>
             </Button>
           </a>
         </div>
@@ -71,7 +73,7 @@ export default function SetupCardButton({
             className="text-sm text-center mb-3"
             style={{ color: colors.textLight }}
           >
-            Try again:
+            {t("try_again")}
           </p>
           <Button
             className="w-full text-white"
@@ -84,7 +86,7 @@ export default function SetupCardButton({
             onClick={handleSetupCard}
           >
             <Settings className="w-4 h-4 mr-2" />
-            {label ?? "Setup Card"}
+            {label ?? t("setup_card")}
           </Button>
         </div>
       </div>
@@ -107,7 +109,7 @@ export default function SetupCardButton({
       ) : (
         <Settings className="w-4 h-4 mr-2" />
       )}
-      {label ?? "Setup Card"}
+      {label ?? t("setup_card")}
     </Button>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import OrderCard, { OrderData } from "@/components/tx-card";
+import TxCard from "@/components/tx-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import Card from "@/components/wallet/card";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
@@ -18,10 +18,10 @@ import { getColors } from "@/utils/colors";
 import { getBaseUrl } from "@/utils/deeplink";
 import { CommunityConfig, Config, Profile } from "@citizenwallet/sdk";
 import { Flex, Text } from "@radix-ui/themes";
-import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "@/lib/use-translation";
 interface ContainerProps {
   config: Config;
   accountAddress: string;
@@ -45,6 +45,7 @@ export default function ReadOnly({
   initialProfile,
   initialBalance,
 }: ContainerProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [loading, setLoading] = useState(initialTransactions.length === 0);
   const [cardColor, setCardColor] = useState(initialCardColor);
@@ -232,7 +233,7 @@ export default function ReadOnly({
                 height={140}
                 className="pb-8"
               />
-              <Text>No transactions yet</Text>
+              <Text>{t("no_transactions_yet")}</Text>
             </Flex>
           )}
 
@@ -263,7 +264,7 @@ export default function ReadOnly({
           {loading ||
             (transactions.length > 0 &&
               transactions.map((transaction) => (
-                <OrderCard
+                <TxCard
                   key={transaction.id}
                   serialNumber={serialNumber}
                   cardAddress={accountAddress}

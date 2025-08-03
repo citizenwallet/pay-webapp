@@ -1,16 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  Shield,
-  Lock,
-  CheckCircle,
-  CreditCard,
-  Settings,
-  ArrowRight,
-  Eye,
-  EyeOff,
-  LockIcon,
-} from "lucide-react";
+import { Shield, LockIcon } from "lucide-react";
 import { getCommunityFromHeaders } from "@/services/config";
 import { headers } from "next/headers";
 import {
@@ -31,6 +20,7 @@ import SetupCardButton from "@/components/wallet/setup-card-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { redirect } from "next/navigation";
 import { getNavigationLink } from "@/utils/navigation-links";
+import { t } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{
@@ -64,10 +54,6 @@ export default async function Page(props: PageProps) {
 
   const colors = getColors(cardColor);
 
-  //   return (
-  //     <Fallback cardColor={cardColor} logo={tokenConfig.logo} colors={colors} />
-  //   );
-
   return (
     <Suspense
       fallback={
@@ -94,9 +80,9 @@ function Fallback({
 }) {
   return (
     <div
-      className="min-h-screen bg-gradient-to-br"
+      className="min-h-screen w-full max-w-md mx-auto"
       style={{
-        background: `linear-gradient(to bottom right, ${colors.lighter}, ${colors.light})`,
+        backgroundColor: colors.light,
       }}
     >
       {/* Header */}
@@ -117,7 +103,7 @@ function Fallback({
                 />
               </div>
               <h1 className="text-xl font-bold" style={{ color: colors.text }}>
-                Brussels Pay
+                {t("brussels_pay")}
               </h1>
             </div>
           </div>
@@ -137,7 +123,7 @@ function Fallback({
             className="text-3xl font-bold mb-4"
             style={{ color: colors.text }}
           >
-            Card
+            {t("card")}
           </h2>
         </div>
 
@@ -160,32 +146,32 @@ function Fallback({
               className="text-lg font-semibold mb-4"
               style={{ color: colors.text }}
             >
-              Card Information
+              {t("card_information")}
             </h3>
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  Project
+                  {t("project")}
                 </span>
                 <Skeleton className="w-24 h-4" />
               </div>
 
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  Card Type
+                  {t("card_type")}
                 </span>
                 <span
                   className="text-sm font-medium"
                   style={{ color: colors.text }}
                 >
-                  Brussels Pay NFC
+                  {t("brussels_pay_nfc")}
                 </span>
               </div>
 
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  Serial Number
+                  {t("serial_number")}
                 </span>
                 <Skeleton className="w-24 h-4" />
               </div>
@@ -199,7 +185,7 @@ function Fallback({
             className="text-sm text-center"
             style={{ color: colors.textLight }}
           >
-            Is this your card?
+            {t("is_this_your_card")}
           </p>
           <Skeleton className="w-2/3 h-10" />
         </div>
@@ -214,10 +200,10 @@ function Fallback({
                 </div>
                 <div>
                   <p className="text-sm font-medium text-blue-900 mb-1">
-                    Using Your Secured Card
+                    {t("using_your_secured_card")}
                   </p>
                   <p className="text-xs text-blue-700">
-                    You can manage all settings through the Brussels Pay app.
+                    {t("using_your_secured_card_description")}
                   </p>
                 </div>
               </div>
@@ -234,10 +220,10 @@ function Fallback({
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
             <p className="text-sm mb-2" style={{ color: colors.textLight }}>
-              Brussels Pay
+              {t("brussels_pay")}
             </p>
             <p className="text-xs" style={{ color: colors.primary }}>
-              Supporting our community through local payments
+              {t("supporting_our_community_through_local_payments")}
             </p>
           </div>
         </div>
@@ -306,9 +292,9 @@ async function SecuredCardPage(props: PageProps) {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br"
+      className="min-h-screen w-full max-w-md mx-auto"
       style={{
-        background: `linear-gradient(to bottom right, ${colors.lighter}, ${colors.light})`,
+        backgroundColor: colors.light,
       }}
     >
       {/* Header */}
@@ -329,7 +315,7 @@ async function SecuredCardPage(props: PageProps) {
                 />
               </div>
               <h1 className="text-xl font-bold" style={{ color: colors.text }}>
-                Brussels Pay
+                {t("brussels_pay")}
               </h1>
             </div>
           </div>
@@ -349,7 +335,7 @@ async function SecuredCardPage(props: PageProps) {
             className="text-3xl font-bold mb-4"
             style={{ color: colors.text }}
           >
-            Card
+            {t("card")}
           </h2>
         </div>
 
@@ -373,13 +359,13 @@ async function SecuredCardPage(props: PageProps) {
               className="text-lg font-semibold mb-4"
               style={{ color: colors.text }}
             >
-              Card Information
+              {t("card_information")}
             </h3>
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  Project
+                  {t("project")}
                 </span>
                 <span
                   className="text-sm font-medium px-2 py-1 rounded-full bg-gray-100"
@@ -391,7 +377,7 @@ async function SecuredCardPage(props: PageProps) {
 
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  Card Type
+                  {t("card_type")}
                 </span>
                 <div
                   className="flex items-center space-x-2 px-2 py-1 rounded-full text-white"
@@ -406,7 +392,7 @@ async function SecuredCardPage(props: PageProps) {
 
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  Serial Number
+                  {t("serial_number")}
                 </span>
                 <span
                   className="text-sm font-medium"
@@ -418,7 +404,7 @@ async function SecuredCardPage(props: PageProps) {
 
               <div className="flex justify-between items-center">
                 <span className="text-sm" style={{ color: colors.textLight }}>
-                  Security
+                  {t("security")}
                 </span>
                 <div className="flex items-center space-x-2">
                   <Shield
@@ -439,7 +425,7 @@ async function SecuredCardPage(props: PageProps) {
               {cardOwnerProfile && (
                 <div className="flex justify-between items-center">
                   <span className="text-sm" style={{ color: colors.textLight }}>
-                    Owner
+                    {t("owner")}
                   </span>
                   <div className="flex items-center space-x-2 pl-1 pr-2 py-1 rounded-full bg-gray-100">
                     <Image
@@ -468,7 +454,7 @@ async function SecuredCardPage(props: PageProps) {
             className="text-sm text-center"
             style={{ color: colors.textLight }}
           >
-            Is this your card?
+            {t("is_this_your_card")}
           </p>
           <SetupCardButton
             colors={colors}
@@ -487,10 +473,10 @@ async function SecuredCardPage(props: PageProps) {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-blue-900 mb-1">
-                    Using Your Secured Card
+                    {t("using_your_secured_card")}
                   </p>
                   <p className="text-xs text-blue-700">
-                    You can manage all settings through the Brussels Pay app.
+                    {t("using_your_secured_card_description")}
                   </p>
                 </div>
               </div>
@@ -507,10 +493,10 @@ async function SecuredCardPage(props: PageProps) {
         <div className="container mx-auto px-4 py-6">
           <div className="text-center">
             <p className="text-sm mb-2" style={{ color: colors.textLight }}>
-              Brussels Pay
+              {t("brussels_pay")}
             </p>
             <p className="text-xs" style={{ color: colors.primary }}>
-              Supporting our community through local payments
+              {t("supporting_our_community_through_local_payments")}
             </p>
           </div>
         </div>

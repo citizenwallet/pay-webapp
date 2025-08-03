@@ -9,6 +9,7 @@ import Image from "next/image";
 import { Card, CardContent } from "./ui/card";
 import { Colors } from "@/utils/colors";
 import { ATransaction } from "@/services/pay/transactions";
+import { useTranslation } from "@/lib/use-translation";
 
 interface MenuItem {
   id: number;
@@ -83,6 +84,8 @@ export default function TransactionCard({
   profiles,
   onTxRendered,
 }: TransactionCardProps) {
+  const { t } = useTranslation();
+
   const formattedDate = useMemo(() => {
     return new Date(transaction.created_at).toLocaleDateString("en-US", {
       month: "short",
@@ -159,7 +162,7 @@ export default function TransactionCard({
                 </Avatar>
                 <Flex direction="column">
                   <Text size="3" weight="bold">
-                    {profile?.name ?? "Anonymous"}
+                    {profile?.name ?? t("anonymous")}
                   </Text>
                   <Text
                     size="2"
@@ -181,14 +184,14 @@ export default function TransactionCard({
                     color: colors.primary,
                   }}
                 >
-                  Order #{order.id}
+                  {t("order_number", { id: order.id })}
                 </Text>
               )}
 
               {hasItems && (
                 <Flex direction="column" gap="1" className="animate-fade-in">
                   <Text size="2" weight="medium" className="text-gray-700">
-                    Items:
+                    {t("items")}
                   </Text>
                   <Flex direction="column" gap="1">
                     {order?.items.map((item: OrderItem, index: number) => (
@@ -221,7 +224,7 @@ export default function TransactionCard({
               {hasDescription && (
                 <Flex direction="column" gap="1" className="animate-fade-in">
                   <Text size="2" weight="medium" className="text-gray-700">
-                    Description:
+                    {t("description")}
                   </Text>
                   <Text size="2" className="text-gray-600 ml-2">
                     {description}
@@ -266,102 +269,6 @@ export default function TransactionCard({
           </div>
         </CardContent>
       </Card>
-    </Link>
-  );
-
-  return (
-    <Link href={link}>
-      <Flex
-        justify="start"
-        align="start"
-        className="w-full max-w-full p-4 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors duration-200"
-        gap="4"
-      >
-        <Flex direction="column" className="flex-1" gap="2">
-          <Flex align="center" gap="3">
-            <Avatar className="h-12 w-12 border-2 border-primary">
-              <AvatarImage
-                src={getAvatarUrl(profile?.image_medium, order.account)}
-                alt="user profile photo"
-                className="object-cover"
-              />
-              <AvatarFallback>
-                {profile?.username?.charAt(0).toUpperCase() ?? "CN"}
-              </AvatarFallback>
-            </Avatar>
-            <Flex direction="column">
-              <Text size="3" weight="bold">
-                {profile?.name ?? "Anonymous"}
-              </Text>
-              <Text size="2" className="text-muted-foreground">
-                {profile?.username ?? order.place.slug}
-              </Text>
-            </Flex>
-          </Flex>
-
-          <Text size="4" weight="medium" className="text-primary">
-            Order #{order.id}
-          </Text>
-
-          {hasItems && (
-            <Flex direction="column" gap="1">
-              <Text size="2" weight="medium" className="text-gray-700">
-                Items:
-              </Text>
-              <Flex direction="column" gap="1">
-                {order.items.slice(0, 3).map((item: any, index: number) => (
-                  <Text key={index} size="2" className="text-gray-600 ml-2">
-                    • {item.name || `Item ${index + 1}`}
-                  </Text>
-                ))}
-                {order.items.length > 3 && (
-                  <Text size="2" className="text-gray-500 ml-2">
-                    +{order.items.length - 3} more items
-                  </Text>
-                )}
-              </Flex>
-            </Flex>
-          )}
-
-          {hasDescription && (
-            <Flex direction="column" gap="1">
-              <Text size="2" weight="medium" className="text-gray-700">
-                Description:
-              </Text>
-              <Text size="2" className="text-gray-600 ml-2">
-                {order.description}
-              </Text>
-            </Flex>
-          )}
-        </Flex>
-
-        <Flex
-          direction="column"
-          justify="start"
-          align="end"
-          gap="2"
-          className="min-w-[120px]"
-        >
-          <div className="flex justify-end">{getStatusBadge(order)}</div>
-
-          <div className="flex justify-end items-center">
-            <Image
-              src={token.logo ?? "/coin.png"}
-              alt="card"
-              width={20}
-              height={20}
-              className="h-6 w-6 mr-1"
-            />
-            <Text size="4" weight="bold" className="text-primary">
-              {(order.total / 100).toFixed(2)}
-            </Text>
-          </div>
-
-          <Text size="2" className="text-gray-500 text-right">
-            {formattedDate}
-          </Text>
-        </Flex>
-      </Flex>
     </Link>
   );
 }
