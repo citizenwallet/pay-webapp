@@ -155,7 +155,7 @@ export default function ReadOnly({
       `${topUpPlugin.url}?account=${accountAddress}&token=${token.address}`,
       "_blank"
     );
-  }, [topUpPlugin, accountAddress]);
+  }, [topUpPlugin, accountAddress, token.address]);
 
   const handleTxRendered = useCallback(
     (tx: ATransaction) => {
@@ -164,7 +164,7 @@ export default function ReadOnly({
       );
       ordersActions.loadOrderFromTxHash(tx.hash);
     },
-    [profilesActions, accountAddress]
+    [profilesActions, accountAddress, ordersActions]
   );
 
   const fetchMoreOrders = useCallback(async () => {

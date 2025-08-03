@@ -33,6 +33,15 @@ const translations: LocaleData = {
     enable_nfc_description: "Make sure NFC is enabled on your phone",
     tap_your_card: "Tap Your Card",
     tap_card_description: "Hold your phone close to your Brussels Pay card",
+    view_your_info: "View Your Info",
+    access_your_card_details_and_account_information:
+      "Access your card details and account information",
+    instant_access: "Instant Access",
+    quick_and_secure_card_information: "Quick and secure card information",
+    community: "Community",
+    supporting_local_payments: "Supporting local payments",
+    dont_have_a_brussels_pay_card_yet: "Don't have a Brussels Pay card yet?",
+    learn_more: "Learn More",
 
     // Transactions
     no_transactions_yet: "No transactions yet",
@@ -123,6 +132,17 @@ const translations: LocaleData = {
     tap_your_card: "Tapez votre carte",
     tap_card_description:
       "Approchez votre téléphone de votre carte Brussels Pay",
+    view_your_info: "Voir vos informations",
+    access_your_card_details_and_account_information:
+      "Accédez aux détails de votre carte et aux informations de votre compte",
+    instant_access: "Accès instantané",
+    quick_and_secure_card_information:
+      "Informations de carte rapides et sécurisées",
+    community: "Communauté",
+    supporting_local_payments: "Soutenir les paiements locaux",
+    dont_have_a_brussels_pay_card_yet:
+      "Vous n'avez pas encore de carte Brussels Pay ?",
+    learn_more: "En savoir plus",
 
     // Transactions
     no_transactions_yet: "Aucune transaction pour le moment",
@@ -213,6 +233,15 @@ const translations: LocaleData = {
       "Zorg ervoor dat NFC is ingeschakeld op je telefoon",
     tap_your_card: "Tik je kaart",
     tap_card_description: "Houd je telefoon dicht bij je Brussels Pay kaart",
+    view_your_info: "Bekijk je informatie",
+    access_your_card_details_and_account_information:
+      "Toegang tot je kaartdetails en accountinformatie",
+    instant_access: "Directe toegang",
+    quick_and_secure_card_information: "Snelle en veilige kaartinformatie",
+    community: "Gemeenschap",
+    supporting_local_payments: "Lokale betalingen ondersteunen",
+    dont_have_a_brussels_pay_card_yet: "Heb je nog geen Brussels Pay kaart?",
+    learn_more: "Meer informatie",
 
     // Transactions
     no_transactions_yet: "Nog geen transacties",

@@ -195,7 +195,7 @@ export default function TransactionCard({
                   </Text>
                   <Flex direction="column" gap="1">
                     {order?.items.map((item: OrderItem, index: number) => (
-                      <div className="flex items-center gap-4">
+                      <div key={item.id} className="flex items-center gap-4">
                         <Text
                           key={index}
                           size="2"

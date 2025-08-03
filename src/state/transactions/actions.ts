@@ -221,7 +221,7 @@ export const useTransactions = (
         baseUrl,
         initialTransactions
       ),
-    [transactionsStore, baseUrl]
+    [transactionsStore, baseUrl, initialTransactions]
   );
 
   return [transactionsStore, actions];

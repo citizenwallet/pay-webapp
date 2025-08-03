@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Theme } from "@radix-ui/themes";
+import { Suspense } from "react";
 
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
@@ -34,9 +35,15 @@ export default function RootLayout({
         )}
       >
         <Theme>
-          <LanguageProvider>
-            <div className="flex flex-col items-center">{children}</div>
-          </LanguageProvider>
+          <Suspense
+            fallback={
+              <div className="min-h-screen min-w-screen flex flex-col items-center"></div>
+            }
+          >
+            <LanguageProvider>
+              <div className="flex flex-col items-center">{children}</div>
+            </LanguageProvider>
+          </Suspense>
           <Toaster />
         </Theme>
       </body>
