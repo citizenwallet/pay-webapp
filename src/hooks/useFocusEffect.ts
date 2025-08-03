@@ -1,5 +1,4 @@
-import { DependencyList, EffectCallback } from "react";
-import { useSafeEffect } from "./useSafeEffect";
+import { DependencyList, EffectCallback, useEffect } from "react";
 
 // Custom hook to execute an effect when the page is focused.
 export const useFocusEffect = (
@@ -7,7 +6,7 @@ export const useFocusEffect = (
   deps: DependencyList // Dependencies for the effect. If any change, the effect is re-run.
 ) => {
   // Use a custom version of useEffect that handles cleanup and dependencies safely.
-  useSafeEffect(() => {
+  useEffect(() => {
     // Function to handle visibility change events.
     const handleVisibilityChange = () => {
       // Check if the document is currently visible.

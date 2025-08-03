@@ -88,6 +88,10 @@ export class TransactionsActions {
       this.listenDate
     );
 
+    if (transactions.length > 0) {
+      this.listenDate = new Date(transactions[0].created_at);
+    }
+
     this.state.upsertNewTransactions(transactions);
   }
 
@@ -136,15 +140,9 @@ export class TransactionsActions {
         this.fetchLimit,
         nextOffset
       );
-      console.log("response", response);
 
       const { transactions, total } = response || [];
       this.previousFetchLength = transactions.length;
-
-      console.log("nextOffset", nextOffset);
-      console.log("transactions.length", transactions.length);
-      console.log("total", total);
-      console.log("hasMore", nextOffset + transactions.length < total);
 
       // Create pagination metadata
       this.transactionsPagination = {
@@ -163,7 +161,7 @@ export class TransactionsActions {
       }
 
       this.state.stopLoading();
-      console.log("hasMore", this.transactionsPagination.hasMore);
+
       return this.transactionsPagination.hasMore;
     } catch (error) {
       console.error("Error loading orders:", error);

@@ -155,10 +155,12 @@ export default function ReadOnly({
 
   const handleTxRendered = useCallback(
     (tx: ATransaction) => {
-      profilesActions.loadProfile(tx.from);
+      profilesActions.loadProfile(
+        accountAddress.toLowerCase() === tx.to.toLowerCase() ? tx.from : tx.to
+      );
       ordersActions.loadOrderFromTxHash(tx.hash);
     },
-    [profilesActions]
+    [profilesActions, accountAddress]
   );
 
   const fetchMoreOrders = useCallback(async () => {
