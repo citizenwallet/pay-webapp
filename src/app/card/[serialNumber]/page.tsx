@@ -140,16 +140,16 @@ async function AsyncPage(props: PageProps) {
 
   const { status, card } = await getCard(serialNumber);
 
-  // if ((status !== 404 && status !== 200) || (card && card.owner !== null)) {
-  //   redirect(
-  //     getNavigationLink(serialNumber, {
-  //       project,
-  //       community,
-  //       token,
-  //       path: "/pin",
-  //     })
-  //   );
-  // }
+  if ((status !== 404 && status !== 200) || (card && card.owner !== null)) {
+    redirect(
+      getNavigationLink(serialNumber, {
+        project,
+        community,
+        token,
+        path: "/pin",
+      })
+    );
+  }
 
   const { transactions } = await getTransactions(address, tokenAddress, 10, 0);
 
