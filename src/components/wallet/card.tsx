@@ -65,7 +65,7 @@ export default function Card({
         "rounded-xl border border-white/80 shadow-[0_8px_16px_rgba(0,0,0,0.3)]",
         "animate-grow-bounce",
         "transition-all ease-in-out duration-200",
-        "w-[80%]",
+        "w-[90%]",
         small ? "opacity-80" : "opacity-100",
         className
       )}
@@ -106,13 +106,13 @@ export default function Card({
 
       {/* Top up button */}
       {onTopUp && (
-        <div className="absolute bottom-6 left-4 animate-fade-in ">
+        <div className="absolute bottom-4 left-4 h-14 flex items-end justify-start animate-fade-in ">
           <div
             className="bg-white rounded-md p-2 flex items-center gap-2 cursor-pointer"
             onClick={onTopUp}
           >
             <PlusIcon className="w-4 h-4" style={{ color: colors.text }} />
-            <Text size="4" weight="bold" style={{ color: colors.text }}>
+            <Text size="2" weight="bold" style={{ color: colors.text }}>
               {t("add_funds")}
             </Text>
           </div>
@@ -121,7 +121,7 @@ export default function Card({
 
       {/* Clickable balance section with token selector */}
       {balance && (
-        <div className="absolute bottom-4 right-4 flex items-center justify-center text-white space-x-2 animate-fade-in">
+        <div className="absolute bottom-4 right-4 h-14 flex items-end justify-start text-white space-x-2 animate-fade-in">
           {availableTokens.length > 1 ? (
             <Select value={tokenAddress} onValueChange={handleTokenSelect}>
               <SelectTrigger className="w-auto bg-transparent border border-white/80 text-white hover:bg-white/10 focus:ring-0 focus:ring-offset-0 px-2 py-1 h-auto rounded-full">
@@ -130,11 +130,11 @@ export default function Card({
                     <Image
                       src={token.logo ?? logo}
                       alt="community logo"
-                      width={48}
-                      height={48}
+                      width={28}
+                      height={28}
                       className="rounded-full"
                     />
-                    <Text size="8" weight="bold" className="text-white">
+                    <Text size="4" weight="bold" className="text-white">
                       {balance}
                     </Text>
                     <div className="w-[4px]" />
@@ -169,11 +169,11 @@ export default function Card({
               <Image
                 src={token.logo ?? logo}
                 alt="community logo"
-                width={48}
-                height={48}
+                width={28}
+                height={28}
                 className="rounded-full"
               />
-              <Text size="8" weight="bold">
+              <Text size="4" weight="bold">
                 {balance}
               </Text>
               <div className="w-[4px]" />
