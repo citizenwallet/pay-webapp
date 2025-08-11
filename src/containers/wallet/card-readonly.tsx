@@ -152,12 +152,10 @@ export default function ReadOnly({
     if (!topUpPlugin) return;
 
     window.open(
-      `${topUpPlugin.url}?account=${accountAddress}&token=${token.address}${
-        project ? `&project=${project}` : ""
-      }`,
+      `${topUpPlugin.url}?account=${accountAddress}&token=${token.address}`,
       "_blank"
     );
-  }, [topUpPlugin, accountAddress, token.address, project]);
+  }, [topUpPlugin, accountAddress, token.address]);
 
   const handleTxRendered = useCallback(
     (tx: ATransaction) => {
