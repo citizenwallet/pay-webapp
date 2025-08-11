@@ -14,6 +14,7 @@ import { CommunityConfig, Config, Profile } from "@citizenwallet/sdk";
 import { Text } from "@radix-ui/themes";
 import { PlusIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo } from "react";
 
 interface CardProps {
@@ -26,6 +27,7 @@ interface CardProps {
   className?: string;
   onTokenChange?: (tokenAddress: string) => void;
   onTopUp?: () => void;
+  topUpLink?: string;
 }
 
 export default function Card({
@@ -38,6 +40,7 @@ export default function Card({
   className,
   onTokenChange,
   onTopUp,
+  topUpLink,
 }: CardProps) {
   const { t } = useTranslation();
   const { community } = config;
@@ -116,6 +119,21 @@ export default function Card({
               {t("add_funds")}
             </Text>
           </div>
+        </div>
+      )}
+      {topUpLink && (
+        <div className="absolute bottom-4 left-4 h-14 flex items-end justify-start animate-fade-in ">
+          <Link
+            href={topUpLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white rounded-md p-2 flex items-center gap-2 cursor-pointer"
+          >
+            <PlusIcon className="w-4 h-4" style={{ color: colors.text }} />
+            <Text size="2" weight="bold" style={{ color: colors.text }}>
+              {t("add_funds")}
+            </Text>
+          </Link>
         </div>
       )}
 

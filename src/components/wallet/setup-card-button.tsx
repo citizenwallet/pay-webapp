@@ -5,6 +5,7 @@ import { Colors } from "@/utils/colors";
 import { Settings, Download, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "@/lib/use-translation";
+import Link from "next/link";
 
 export default function SetupCardButton({
   colors,
@@ -47,8 +48,8 @@ export default function SetupCardButton({
           {t("brussels_pay_app_not_found")}
         </p>
         <div className="flex flex-col space-y-2">
-          <a
-            href={process.env.NEXT_PUBLIC_APP_STORE_URL}
+          <Link
+            href={process.env.NEXT_PUBLIC_APP_STORE_URL ?? ""}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -56,9 +57,9 @@ export default function SetupCardButton({
               <Download className="w-4 h-4" />
               <span>{t("download_for_ios")}</span>
             </Button>
-          </a>
-          <a
-            href={process.env.NEXT_PUBLIC_PLAY_STORE_URL}
+          </Link>
+          <Link
+            href={process.env.NEXT_PUBLIC_PLAY_STORE_URL ?? ""}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -66,7 +67,7 @@ export default function SetupCardButton({
               <Download className="w-4 h-4" />
               <span>{t("download_for_android")}</span>
             </Button>
-          </a>
+          </Link>
         </div>
         <div className="flex flex-col space-y-2 pt-4">
           <p
