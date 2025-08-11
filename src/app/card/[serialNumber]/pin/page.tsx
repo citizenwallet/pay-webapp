@@ -364,7 +364,9 @@ async function SecuredCardPage(props: PageProps & { language: Language }) {
             className="mt-2 mb-8"
             topUpLink={
               topUpPlugin
-                ? `${topUpPlugin.url}?account=${cardAddress}&token=${tokenConfig.address}`
+                ? `${topUpPlugin.url}?account=${cardAddress}&token=${
+                    tokenConfig.address
+                  }${project ? `&project=${project}` : ""}`
                 : undefined
             }
           />
