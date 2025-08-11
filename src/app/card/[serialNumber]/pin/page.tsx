@@ -1,10 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Shield, LockIcon, PlusIcon } from "lucide-react";
+import { Shield, LockIcon } from "lucide-react";
 import { getCommunityFromHeaders } from "@/services/config";
 import { headers } from "next/headers";
 import {
   CommunityConfig,
-  ConfigPlugin,
   getCardAddress,
   getProfileFromAddress,
   Profile,
@@ -22,8 +21,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { redirect } from "next/navigation";
 import { getNavigationLink } from "@/utils/navigation-links";
 import { tServer, getLanguageFromHeaders, Language } from "@/lib/i18n";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 interface PageProps {
   params: Promise<{
@@ -289,7 +286,7 @@ async function SecuredCardPage(props: PageProps & { language: Language }) {
   const colors = getColors(cardColor);
 
   const { card, challenge, status } = await getCard(serialNumber);
-  if (!card && status === 404) {
+  if ((!card && status === 404) || !card?.owner) {
     redirect(
       getNavigationLink(serialNumber, {
         project,

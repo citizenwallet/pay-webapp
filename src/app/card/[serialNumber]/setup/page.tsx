@@ -45,8 +45,8 @@ export default async function ClaimCardPage(props: PageProps) {
 
   const colors = getColors(cardColor);
 
-  const { card, status } = await getCard(serialNumber);
-  if (card !== null || status !== 404) {
+  const { card } = await getCard(serialNumber);
+  if (card !== null && card.owner) {
     redirect(
       getNavigationLink(serialNumber, {
         project,
