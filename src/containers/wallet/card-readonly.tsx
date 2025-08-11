@@ -215,7 +215,7 @@ export default function ReadOnly({
         <Flex
           direction="column"
           align="center"
-          className="w-full max-w-xl pt-[400px] px-16 pb-16"
+          className="w-full max-w-xl pt-[min(76vw,456px)] px-8 pb-16"
           gap="3"
         >
           {!loadingTransactions && !loading && transactions.length === 0 && (
