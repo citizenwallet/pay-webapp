@@ -359,7 +359,7 @@ async function SecuredCardPage(props: PageProps & { language: Language }) {
         <div className="flex justify-center items-center">
           <NFCCard
             cardColor={cardColor}
-            profile={profile ?? undefined}
+            profile={cardOwnerProfile ?? profile ?? undefined}
             config={config}
             className="mt-2 mb-8"
             topUpLink={

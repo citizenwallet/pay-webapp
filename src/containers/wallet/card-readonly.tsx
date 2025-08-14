@@ -25,6 +25,7 @@ import { useTranslation } from "@/lib/use-translation";
 interface ContainerProps {
   config: Config;
   accountAddress: string;
+  accountParentAddress?: string;
   initialTransactions: ATransaction[];
   serialNumber: string;
   project?: string;
@@ -37,6 +38,7 @@ interface ContainerProps {
 export default function ReadOnly({
   config,
   accountAddress,
+  accountParentAddress,
   initialTransactions = [],
   serialNumber,
   project,
@@ -114,7 +116,7 @@ export default function ReadOnly({
     let unsubscribe: () => void | undefined;
 
     if (accountAddress) {
-      profilesActions.loadProfile(accountAddress);
+      profilesActions.loadProfile(accountParentAddress ?? accountAddress);
       actions.fetchBalance(token.address);
       unsubscribe = transactionsActions.listen(accountAddress, token.address);
     }
@@ -127,6 +129,7 @@ export default function ReadOnly({
     actions,
     transactionsActions,
     accountAddress,
+    accountParentAddress,
     token.address,
   ]);
 
@@ -176,7 +179,8 @@ export default function ReadOnly({
 
   const balance = state((state) => state.balance ?? initialBalance ?? "0.00");
   const profile = profilesState(
-    (state) => state.profiles[accountAddress] ?? initialProfile
+    (state) =>
+      state.profiles[accountParentAddress ?? accountAddress] ?? initialProfile
   );
 
   const colors = getColors(cardColor);

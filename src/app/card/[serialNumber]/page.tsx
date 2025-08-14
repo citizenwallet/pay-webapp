@@ -6,6 +6,7 @@ import {
   getAccountBalance,
   getCardAddress,
   getProfileFromAddress,
+  ProfileWithTokenId,
 } from "@citizenwallet/sdk";
 import { formatUnits, id } from "ethers";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
@@ -121,7 +122,7 @@ async function AsyncPage(props: PageProps) {
     throw new Error("NEXT_PUBLIC_IPFS_DOMAIN is not set");
   }
 
-  const profile = await getProfileFromAddress(
+  const cardProfile = await getProfileFromAddress(
     ipfsDomain,
     communityConfig,
     address
@@ -150,6 +151,15 @@ async function AsyncPage(props: PageProps) {
     );
   }
 
+  let parentProfile: ProfileWithTokenId | null = null;
+  if (cardProfile && cardProfile.parent) {
+    parentProfile = await getProfileFromAddress(
+      ipfsDomain,
+      communityConfig,
+      cardProfile.parent
+    );
+  }
+
   const { transactions } = await getTransactions(address, tokenAddress, 10, 0);
 
   return (
@@ -159,9 +169,10 @@ async function AsyncPage(props: PageProps) {
       project={project ?? community}
       initialCardColor={cardColor}
       accountAddress={address}
+      accountParentAddress={parentProfile?.account ?? undefined}
       initialTransactions={transactions}
       tokenAddress={tokenAddress}
-      initialProfile={profile ?? undefined}
+      initialProfile={cardProfile ?? undefined}
       initialBalance={formattedBalance}
     />
   );
