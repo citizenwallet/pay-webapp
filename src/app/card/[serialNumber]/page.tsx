@@ -151,15 +151,6 @@ async function AsyncPage(props: PageProps) {
     );
   }
 
-  let parentProfile: ProfileWithTokenId | null = null;
-  if (cardProfile && cardProfile.parent) {
-    parentProfile = await getProfileFromAddress(
-      ipfsDomain,
-      communityConfig,
-      cardProfile.parent
-    );
-  }
-
   const { transactions } = await getTransactions(address, tokenAddress, 10, 0);
 
   return (
@@ -169,7 +160,6 @@ async function AsyncPage(props: PageProps) {
       project={project ?? community}
       initialCardColor={cardColor}
       accountAddress={address}
-      accountParentAddress={parentProfile?.account ?? undefined}
       initialTransactions={transactions}
       tokenAddress={tokenAddress}
       initialProfile={cardProfile ?? undefined}

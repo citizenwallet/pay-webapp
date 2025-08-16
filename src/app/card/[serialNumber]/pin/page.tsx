@@ -297,14 +297,11 @@ async function SecuredCardPage(props: PageProps & { language: Language }) {
     );
   }
 
-  let cardOwnerProfile: Profile | null = null;
-  if (card?.owner) {
-    cardOwnerProfile = await getProfileFromAddress(
-      ipfsDomain,
-      communityConfig,
-      card.owner
-    );
-  }
+  const cardOwnerProfile = await getProfileFromAddress(
+    ipfsDomain,
+    communityConfig,
+    card.owner
+  );
 
   return (
     <div
@@ -359,7 +356,7 @@ async function SecuredCardPage(props: PageProps & { language: Language }) {
         <div className="flex justify-center items-center">
           <NFCCard
             cardColor={cardColor}
-            profile={cardOwnerProfile ?? profile ?? undefined}
+            profile={profile ?? undefined}
             config={config}
             className="mt-2 mb-8"
             topUpLink={

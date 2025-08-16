@@ -12,7 +12,6 @@ import {
   CommunityConfig,
   getCardAddress,
   getProfileFromAddress,
-  getProfileFromUsername,
 } from "@citizenwallet/sdk";
 import { getTransaction } from "@/services/pay/transactions";
 import { id } from "ethers";
