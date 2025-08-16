@@ -166,7 +166,12 @@ export default function TransactionCard({
                       color: colors.textLight,
                     }}
                   >
-                    {profile?.username ?? order?.place.slug ?? "anonymous"}
+                    @
+                    {(
+                      profile?.username ??
+                      order?.place.slug ??
+                      "anonymous"
+                    ).replace("@", "")}
                   </Text>
                 </Flex>
               </Flex>
