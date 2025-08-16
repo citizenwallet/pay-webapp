@@ -1,5 +1,7 @@
 "use server";
 
+import { ProfileWithTokenId } from "@citizenwallet/sdk";
+
 export interface ATransaction {
   id: string;
   hash: string;
@@ -11,6 +13,8 @@ export interface ATransaction {
   value: string;
   description: string;
   status: string;
+  from_profile?: ProfileWithTokenId;
+  to_profile?: ProfileWithTokenId;
 }
 
 export async function getNewTransactions(

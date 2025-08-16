@@ -69,7 +69,6 @@ interface TransactionCardProps {
   colors: Colors;
   project?: string;
   token: ConfigToken;
-  profiles: { [key: string]: Profile };
   onTxRendered: (tx: ATransaction) => void;
 }
 
@@ -81,7 +80,6 @@ export default function TransactionCard({
   colors,
   project,
   token,
-  profiles,
   onTxRendered,
 }: TransactionCardProps) {
   const { t } = useTranslation();
@@ -97,11 +95,9 @@ export default function TransactionCard({
   }, [transaction.created_at]);
 
   const profile: Profile | undefined =
-    profiles[
-      cardAddress.toLowerCase() === transaction.to.toLowerCase()
-        ? transaction.from
-        : transaction.to
-    ];
+    cardAddress.toLowerCase() === transaction.to.toLowerCase()
+      ? transaction.from_profile
+      : transaction.to_profile;
 
   useEffect(() => {
     if (transaction) {
