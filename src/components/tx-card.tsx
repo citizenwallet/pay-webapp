@@ -10,6 +10,8 @@ import { Card, CardContent } from "./ui/card";
 import { Colors } from "@/utils/colors";
 import { ATransaction } from "@/services/pay/transactions";
 import { useTranslation } from "@/lib/use-translation";
+import { ZeroAddress } from "ethers";
+import { getTreasuryProfile } from "@/services/config";
 
 interface MenuItem {
   id: number;
@@ -94,10 +96,13 @@ export default function TransactionCard({
     });
   }, [transaction.created_at]);
 
-  const profile: Profile | undefined =
+  let profile: Profile | undefined =
     cardAddress.toLowerCase() === transaction.to.toLowerCase()
       ? transaction.from_profile
       : transaction.to_profile;
+  if (profile?.account === ZeroAddress) {
+    profile = getTreasuryProfile(token);
+  }
 
   useEffect(() => {
     if (transaction) {
@@ -157,7 +162,7 @@ export default function TransactionCard({
                   </AvatarFallback>
                 </Avatar>
                 <Flex direction="column">
-                  <Text size="3" weight="bold">
+                  <Text size="3" weight="bold" className="line-clamp-2">
                     {profile?.name ?? t("anonymous")}
                   </Text>
                   <Text

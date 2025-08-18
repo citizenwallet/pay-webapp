@@ -1,4 +1,4 @@
-import { getCommunityFromHeaders } from "@/services/config";
+import { getCommunityFromHeaders, getTreasuryProfile } from "@/services/config";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import Details from "./details";
@@ -14,7 +14,7 @@ import {
   getProfileFromAddress,
 } from "@citizenwallet/sdk";
 import { getTransaction } from "@/services/pay/transactions";
-import { id } from "ethers";
+import { id, ZeroAddress } from "ethers";
 import { t } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
@@ -104,16 +104,18 @@ async function AsyncPage({
     return <div>Card not found</div>;
   }
 
-  const profile = await getProfileFromAddress(
-    ipfsDomain,
-    communityConfig,
+  const withAddress =
     cardAddress.toLowerCase() === transaction.to.toLowerCase()
       ? transaction.from
-      : transaction.to
-  );
+      : transaction.to;
 
   const token = communityConfig.getToken(transaction.contract);
   const tokenLogo = token?.logo;
+
+  let profile =
+    withAddress === ZeroAddress
+      ? getTreasuryProfile(token)
+      : await getProfileFromAddress(ipfsDomain, communityConfig, withAddress);
 
   return (
     <Details

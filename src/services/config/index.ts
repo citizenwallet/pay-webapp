@@ -1,9 +1,15 @@
-import { Config, parseAliasFromDomain } from "@citizenwallet/sdk";
+import {
+  Config,
+  ConfigToken,
+  parseAliasFromDomain,
+  Profile,
+} from "@citizenwallet/sdk";
 import { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
 
 import CommunitiesJson from "./communities.json";
 import LocalCommunitiesJson from "./communities.local.json";
 import ManualMappingJson from "./manualMapping.json";
+import { ZeroAddress } from "ethers";
 
 // Define type for manual mapping to allow string indexing
 type ManualMapping = { [key: string]: string };
@@ -50,4 +56,16 @@ export const getCommunityFromHeaders = async (
   }
 
   return readCommunityFile(alias);
+};
+
+export const getTreasuryProfile = (tokenConfig: ConfigToken): Profile => {
+  return {
+    account: ZeroAddress,
+    description: "",
+    image: tokenConfig.logo ?? "/coin.png",
+    image_medium: tokenConfig.logo ?? "/coin.png",
+    image_small: tokenConfig.logo ?? "/coin.png",
+    name: tokenConfig.name ?? "Treasury",
+    username: tokenConfig.symbol ?? "treasury",
+  };
 };
