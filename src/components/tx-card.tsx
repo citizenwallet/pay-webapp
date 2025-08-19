@@ -104,6 +104,9 @@ export default function TransactionCard({
     profile = getTreasuryProfile(token);
   }
 
+  const isOutgoing =
+    cardAddress.toLowerCase() === transaction.from.toLowerCase();
+
   useEffect(() => {
     if (transaction) {
       onTxRendered(transaction);
@@ -264,6 +267,7 @@ export default function TransactionCard({
                   weight="bold"
                   className={cn("text-primary", order?.status === "refunded")}
                 >
+                  {isOutgoing ? "- " : "+ "}
                   {transaction.value}
                 </Text>
               </div>
