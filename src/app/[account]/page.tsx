@@ -4,9 +4,7 @@ import CardReadOnly from "@/containers/wallet/card-readonly";
 import {
   CommunityConfig,
   getAccountBalance,
-  getCardAddress,
   getProfileFromAddress,
-  ProfileWithTokenId,
 } from "@citizenwallet/sdk";
 import { formatUnits, id } from "ethers";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
@@ -15,15 +13,12 @@ import { Suspense } from "react";
 import { Flex } from "@radix-ui/themes";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getCard } from "@/services/pay/cards";
-import { redirect } from "next/navigation";
 import SkeletonCard from "@/components/wallet/skeleton-card";
-import { getNavigationLink } from "@/utils/navigation-links";
 import { getTransactions } from "@/services/pay/transactions";
 
 interface PageProps {
   params: Promise<{
-    serialNumber: string;
+    account: string;
   }>;
   searchParams: Promise<{
     project?: string;
@@ -99,15 +94,10 @@ async function AsyncPage(props: PageProps) {
 
   const communityConfig = new CommunityConfig(config);
 
-  const { serialNumber } = await props.params;
+  const { account } = await props.params;
   const { project, community, token } = await props.searchParams;
 
   const tokenConfig = communityConfig.getToken(token);
-
-  const address = await getCardAddress(communityConfig, id(serialNumber));
-  if (!address) {
-    return <div>Card not found</div>;
-  }
 
   const cardColor =
     ColorMappingOverrides[project ?? community ?? "default"] ??
@@ -125,16 +115,12 @@ async function AsyncPage(props: PageProps) {
   const cardProfile = await getProfileFromAddress(
     ipfsDomain,
     communityConfig,
-    address
+    account
   );
 
-  console.log("address ", address);
-
-  const balance = await getAccountBalance(communityConfig, address, {
+  const balance = await getAccountBalance(communityConfig, account, {
     tokenAddress,
   });
-
-  console.log("balance", balance);
 
   let formattedBalance = formatUnits(balance ?? 0n, tokenConfig.decimals);
   if (tokenConfig.decimals === 0) {
@@ -143,31 +129,19 @@ async function AsyncPage(props: PageProps) {
     formattedBalance = parseFloat(formattedBalance).toFixed(2);
   }
 
-  const { status, card } = await getCard(serialNumber);
-  if ((status !== 404 && status !== 200) || (card && card.owner !== null)) {
-    redirect(
-      getNavigationLink(serialNumber, {
-        project,
-        community,
-        token,
-        path: "/pin",
-      })
-    );
-  }
-
-  const { transactions } = await getTransactions(address, tokenAddress, 10, 0);
+  const { transactions } = await getTransactions(account, tokenAddress, 10, 0);
 
   return (
     <CardReadOnly
       config={config}
-      serialNumber={serialNumber}
       project={project ?? community}
       initialCardColor={cardColor}
-      accountAddress={address}
+      accountAddress={account}
       initialTransactions={transactions}
       tokenAddress={tokenAddress}
       initialProfile={cardProfile ?? undefined}
       initialBalance={formattedBalance}
+      hideTopUp
     />
   );
 }

@@ -64,7 +64,7 @@ export interface OrderData {
 }
 
 interface TransactionCardProps {
-  serialNumber: string;
+  serialNumber?: string;
   cardAddress: string;
   transaction: ATransaction;
   order?: OrderData;
@@ -119,7 +119,9 @@ export default function TransactionCard({
     (order?.description && order.description.trim() !== "");
   const description = transaction?.description || order?.description;
 
-  let link = `/card/${serialNumber}/tx/${transaction.hash}?token=${token.address}`;
+  let link = serialNumber
+    ? `/card/${serialNumber}/tx/${transaction.hash}?token=${token.address}`
+    : `/${cardAddress}/tx/${transaction.hash}?token=${token.address}`;
   if (project) {
     link += `&project=${project}`;
   }

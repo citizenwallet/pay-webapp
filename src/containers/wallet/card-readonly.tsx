@@ -26,12 +26,13 @@ interface ContainerProps {
   config: Config;
   accountAddress: string;
   initialTransactions: ATransaction[];
-  serialNumber: string;
+  serialNumber?: string;
   project?: string;
   initialCardColor: string;
   tokenAddress?: string;
   initialProfile?: Profile;
   initialBalance?: string;
+  hideTopUp?: boolean;
 }
 
 export default function ReadOnly({
@@ -44,6 +45,7 @@ export default function ReadOnly({
   tokenAddress,
   initialProfile,
   initialBalance,
+  hideTopUp,
 }: ContainerProps) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -133,7 +135,7 @@ export default function ReadOnly({
 
   const handleTokenChange = useCallback(
     (tokenAddress: string) => {
-      let path = `/card/${serialNumber}`;
+      let path = serialNumber ? `/card/${serialNumber}` : `/${accountAddress}`;
       if (project) {
         path += `?project=${project}`;
       }
@@ -146,7 +148,7 @@ export default function ReadOnly({
       setLoading(true);
       router.replace(path);
     },
-    [serialNumber, project, router]
+    [serialNumber, accountAddress, project, router]
   );
 
   const handleTopUp = useCallback(() => {
@@ -207,7 +209,7 @@ export default function ReadOnly({
             tokenAddress={tokenAddress}
             className="mt-12 mb-8"
             onTokenChange={handleTokenChange}
-            onTopUp={topUpPlugin ? handleTopUp : undefined}
+            onTopUp={topUpPlugin && !hideTopUp ? handleTopUp : undefined}
           />
         </div>
 
