@@ -6,7 +6,7 @@ import {
   getAccountBalance,
   getProfileFromAddress,
 } from "@citizenwallet/sdk";
-import { formatUnits, id } from "ethers";
+import { formatUnits } from "ethers";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
 import { TokenMappingOverrides } from "@/components/wallet/tokenMappingOverrides";
 import { Suspense } from "react";

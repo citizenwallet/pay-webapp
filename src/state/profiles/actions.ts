@@ -47,7 +47,7 @@ export class ProfilesActions {
         throw new Error("Profile not found");
       }
 
-      this.state.putProfile(profile);
+      this.state.putProfile(account, profile);
     } catch (e) {
       console.error(e);
     }
@@ -85,7 +85,7 @@ export class ProfilesActions {
         throw new Error("Profile not found");
       }
 
-      this.state.putProfile(profile);
+      this.state.putProfile(profile.account, profile);
     } catch (e) {
       console.error(e);
     }

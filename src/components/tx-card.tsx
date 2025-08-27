@@ -68,6 +68,7 @@ interface TransactionCardProps {
   cardAddress: string;
   transaction: ATransaction;
   order?: OrderData;
+  profiles: { [key: string]: Profile };
   colors: Colors;
   project?: string;
   token: ConfigToken;
@@ -79,6 +80,7 @@ export default function TransactionCard({
   cardAddress,
   transaction,
   order,
+  profiles = {},
   colors,
   project,
   token,
@@ -96,10 +98,19 @@ export default function TransactionCard({
     });
   }, [transaction.created_at]);
 
+  console.log("profiles", profiles);
+
+  const profileAddress =
+    cardAddress.toLowerCase() === transaction.to.toLowerCase()
+      ? transaction.from
+      : transaction.to;
   let profile: Profile | undefined =
     cardAddress.toLowerCase() === transaction.to.toLowerCase()
       ? transaction.from_profile
       : transaction.to_profile;
+  if (profileAddress && profiles[profileAddress]) {
+    profile = profiles[profileAddress];
+  }
   if (profile?.account === ZeroAddress) {
     profile = getTreasuryProfile(token);
   }

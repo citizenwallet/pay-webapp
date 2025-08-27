@@ -6,7 +6,6 @@ import {
   getAccountBalance,
   getCardAddress,
   getProfileFromAddress,
-  ProfileWithTokenId,
 } from "@citizenwallet/sdk";
 import { formatUnits, id } from "ethers";
 import { ColorMappingOverrides } from "@/components/wallet/colorMappingOverrides";
@@ -128,13 +127,9 @@ async function AsyncPage(props: PageProps) {
     address
   );
 
-  console.log("address ", address);
-
   const balance = await getAccountBalance(communityConfig, address, {
     tokenAddress,
   });
-
-  console.log("balance", balance);
 
   let formattedBalance = formatUnits(balance ?? 0n, tokenConfig.decimals);
   if (tokenConfig.decimals === 0) {

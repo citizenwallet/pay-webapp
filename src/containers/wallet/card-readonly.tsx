@@ -163,8 +163,10 @@ export default function ReadOnly({
   const handleTxRendered = useCallback(
     (tx: ATransaction) => {
       ordersActions.loadOrderFromTxHash(tx.hash);
+      profilesActions.loadProfile(tx.from);
+      profilesActions.loadProfile(tx.to);
     },
-    [ordersActions]
+    [ordersActions, profilesActions]
   );
 
   const fetchMoreOrders = useCallback(async () => {
@@ -180,6 +182,7 @@ export default function ReadOnly({
       state.profiles[initialProfile?.account ?? accountAddress] ??
       initialProfile
   );
+  const profiles = profilesState((state) => state.profiles);
 
   const colors = getColors(cardColor);
 
@@ -271,6 +274,7 @@ export default function ReadOnly({
                   cardAddress={accountAddress}
                   transaction={transaction}
                   order={orders[transaction.hash]}
+                  profiles={profiles}
                   colors={colors}
                   project={project}
                   token={token}

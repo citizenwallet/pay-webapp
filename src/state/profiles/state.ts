@@ -9,7 +9,7 @@ export interface ProfilesState {
   };
   startLoading: () => void;
   stopLoading: () => void;
-  putProfile: (profile: Profile) => void;
+  putProfile: (address: string, profile: Profile) => void;
   clear: () => void;
 }
 
@@ -66,11 +66,11 @@ export const useProfilesStore = create<ProfilesState>((set) => ({
   ...initialState(),
   startLoading: () => set({ loading: true }),
   stopLoading: () => set({ loading: false }),
-  putProfile: (profile) =>
+  putProfile: (address, profile) =>
     set((state) => ({
       profiles: {
         ...state.profiles,
-        [profile.account]: { ...profile, username: `@${profile.username}` },
+        [address]: { ...profile, username: `@${profile.username}` },
       },
     })),
   clear: () => set(initialState()),
