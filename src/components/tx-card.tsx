@@ -98,8 +98,6 @@ export default function TransactionCard({
     });
   }, [transaction.created_at]);
 
-  console.log("profiles", profiles);
-
   const profileAddress =
     cardAddress.toLowerCase() === transaction.to.toLowerCase()
       ? transaction.from
