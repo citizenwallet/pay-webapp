@@ -242,6 +242,7 @@ function Fallback({
 
 async function SecuredCardPage(props: PageProps & { language: Language }) {
   const headersList = await headers();
+  const language = getLanguageFromHeaders(headersList);
 
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {

@@ -4,6 +4,7 @@ import { OrderData } from "@/components/tx-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useTranslation } from "@/lib/use-translation";
+import { translateStatus } from "@/lib/i18n";
 import { ATransaction } from "@/services/pay/transactions";
 import { formatAddress } from "@/utils/formatting";
 import { Profile } from "@citizenwallet/sdk";
@@ -128,7 +129,7 @@ export default function DetailsPage({
                   {t("status")}
                 </Text>
                 <div className="mt-1">
-                  {order?.status ?? transaction.status}
+                  {translateStatus(order?.status ?? transaction.status)}
                 </div>
               </div>
             </div>

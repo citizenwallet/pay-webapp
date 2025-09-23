@@ -9,6 +9,8 @@ import { ZeroAddress, formatUnits } from "ethers";
 import { getBurnerProfile, getMinterProfile } from "@/state/profiles/state";
 import Link from "next/link";
 import { cn, getAvatarUrl } from "@/lib/utils";
+import { useTranslation } from "@/lib/use-translation";
+import { translateStatus } from "@/lib/i18n";
 
 interface TxRowProps {
   token: ConfigToken;
@@ -29,6 +31,7 @@ export default function TxRow({
   actions,
   profiles,
 }: TxRowProps) {
+  const { t } = useTranslation();
   const from = tx.data?.from ?? "";
   const to = tx.data?.to ?? "";
 
@@ -105,7 +108,9 @@ export default function TxRow({
           </Text>
           {status === "success" && <Text size="2">{formattedDate}</Text>}
           {status !== "success" && (
-            <Text size="2">{status === "fail" ? "failed" : "pending"}</Text>
+            <Text size="2">
+              {translateStatus(status === "fail" ? "failed" : "pending")}
+            </Text>
           )}
         </Flex>
       </Flex>

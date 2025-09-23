@@ -108,6 +108,10 @@ const translations: LocaleData = {
     more_items: "more items",
     refunded: "Refunded",
     pending: "Pending",
+    success: "Success",
+    fail: "Failed",
+    failed: "Failed",
+    paid: "Paid",
 
     // Error Messages
     community_not_found: "Community not found",
@@ -222,6 +226,10 @@ const translations: LocaleData = {
     more_items: "articles supplémentaires",
     refunded: "Remboursé",
     pending: "En attente",
+    success: "Succès",
+    fail: "Échec",
+    failed: "Échec",
+    paid: "Payé",
 
     // Error Messages
     community_not_found: "Communauté introuvable",
@@ -332,6 +340,10 @@ const translations: LocaleData = {
     more_items: "meer artikelen",
     refunded: "Terugbetaald",
     pending: "In behandeling",
+    success: "Succesvol",
+    fail: "Mislukt",
+    failed: "Mislukt",
+    paid: "Betaald",
 
     // Error Messages
     community_not_found: "Gemeenschap niet gevonden",
@@ -433,4 +445,28 @@ export function addLanguageToUrl(url: string, language: Language): string {
 // Utility function to get language from headers for server-side rendering
 export function getLanguageFromHeaders(headers: Headers): Language {
   return getServerLanguage(headers);
+}
+
+// Helper function to translate status values
+export function translateStatus(status: string, language?: Language): string {
+  const normalizedStatus = status.toLowerCase();
+
+  // Map status values to translation keys
+  const statusMap: Record<string, string> = {
+    success: "success",
+    fail: "failed",
+    failed: "failed",
+    pending: "pending",
+    refund: "refunded",
+    refunded: "refunded",
+    paid: "paid",
+  };
+
+  const translationKey = statusMap[normalizedStatus];
+  if (translationKey) {
+    return t(translationKey, undefined, language);
+  }
+
+  // Fallback to original status if no translation found
+  return status;
 }

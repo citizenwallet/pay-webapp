@@ -82,9 +82,6 @@ async function AsyncPage({ hash, account }: { hash: string; account: string }) {
     minute: "2-digit",
   });
 
-  const headersList = await headers();
-  const language = getLanguageFromHeaders(headersList);
-
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {
     return <div>{tServer("community_not_found", language)}</div>;
