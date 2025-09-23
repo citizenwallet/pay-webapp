@@ -20,7 +20,7 @@ import SetupCardButton from "@/components/wallet/setup-card-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { redirect } from "next/navigation";
 import { getNavigationLink } from "@/utils/navigation-links";
-import { tServer, getLanguageFromHeaders, Language } from "@/lib/i18n";
+import { getLanguageFromHeaders, tServer, Language } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{
@@ -40,7 +40,7 @@ export default async function Page(props: PageProps) {
 
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {
-    return <div>Community not found</div>;
+    return <div>{tServer("community_not_found", language)}</div>;
   }
 
   const communityConfig = new CommunityConfig(config);
@@ -245,7 +245,7 @@ async function SecuredCardPage(props: PageProps & { language: Language }) {
 
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {
-    return <div>Community not found</div>;
+    return <div>{tServer("community_not_found", language)}</div>;
   }
 
   const communityConfig = new CommunityConfig(config);
@@ -254,7 +254,7 @@ async function SecuredCardPage(props: PageProps & { language: Language }) {
 
   const cardAddress = await getCardAddress(communityConfig, id(serialNumber));
   if (!cardAddress) {
-    return <div>Card not found</div>;
+    return <div>{tServer("card_not_found", language)}</div>;
   }
 
   const ipfsDomain = process.env.NEXT_PUBLIC_IPFS_DOMAIN;

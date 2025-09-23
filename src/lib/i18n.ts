@@ -106,6 +106,18 @@ const translations: LocaleData = {
     // Status
     item: "Item",
     more_items: "more items",
+    refunded: "Refunded",
+    pending: "Pending",
+
+    // Error Messages
+    community_not_found: "Community not found",
+    card_not_found: "Card not found",
+    transaction_not_found: "Transaction not found",
+
+    // Metadata
+    app_title: "Citizen Wallet",
+    app_description:
+      "Send and receive your community currency in your mobile browser",
   },
   fr: {
     // Common
@@ -208,6 +220,18 @@ const translations: LocaleData = {
     // Status
     item: "Article",
     more_items: "articles supplémentaires",
+    refunded: "Remboursé",
+    pending: "En attente",
+
+    // Error Messages
+    community_not_found: "Communauté introuvable",
+    card_not_found: "Carte introuvable",
+    transaction_not_found: "Transaction introuvable",
+
+    // Metadata
+    app_title: "Citizen Wallet",
+    app_description:
+      "Envoyez et recevez votre monnaie communautaire dans votre navigateur mobile",
   },
   nl: {
     // Common
@@ -306,6 +330,18 @@ const translations: LocaleData = {
     // Status
     item: "Artikel",
     more_items: "meer artikelen",
+    refunded: "Terugbetaald",
+    pending: "In behandeling",
+
+    // Error Messages
+    community_not_found: "Gemeenschap niet gevonden",
+    card_not_found: "Kaart niet gevonden",
+    transaction_not_found: "Transactie niet gevonden",
+
+    // Metadata
+    app_title: "Citizen Wallet",
+    app_description:
+      "Verstuur en ontvang je gemeenschapsvaluta in je mobiele browser",
   },
 };
 

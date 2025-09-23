@@ -30,7 +30,7 @@ export default async function ClaimCardPage(props: PageProps) {
 
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {
-    return <div>Community not found</div>;
+    return <div>{tServer("community_not_found", language)}</div>;
   }
 
   const communityConfig = new CommunityConfig(config);

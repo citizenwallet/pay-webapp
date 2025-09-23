@@ -15,7 +15,7 @@ import {
 } from "@citizenwallet/sdk";
 import { getTransaction } from "@/services/pay/transactions";
 import { id, ZeroAddress } from "ethers";
-import { t } from "@/lib/i18n";
+import { t, getLanguageFromHeaders, tServer } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
 interface PageProps {
@@ -38,9 +38,12 @@ export default async function Page(props: PageProps) {
 }
 
 async function AsyncPage({ hash, account }: { hash: string; account: string }) {
+  const headersList = await headers();
+  const language = getLanguageFromHeaders(headersList);
+
   const transaction = await getTransaction(hash);
   if (!transaction) {
-    return <div>Transaction not found</div>;
+    return <div>{tServer("transaction_not_found", language)}</div>;
   }
 
   if (!transaction) {
@@ -80,10 +83,11 @@ async function AsyncPage({ hash, account }: { hash: string; account: string }) {
   });
 
   const headersList = await headers();
+  const language = getLanguageFromHeaders(headersList);
 
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {
-    return <div>Community not found</div>;
+    return <div>{tServer("community_not_found", language)}</div>;
   }
 
   const communityConfig = new CommunityConfig(config);

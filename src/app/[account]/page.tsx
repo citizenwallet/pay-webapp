@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import SkeletonCard from "@/components/wallet/skeleton-card";
 import { getTransactions } from "@/services/pay/transactions";
+import { getLanguageFromHeaders, tServer } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{
@@ -29,12 +30,13 @@ interface PageProps {
 
 export default async function Page(props: PageProps) {
   const headersList = await headers();
+  const language = getLanguageFromHeaders(headersList);
 
   const { project, community, token } = await props.searchParams;
 
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {
-    return <div>Community not found</div>;
+    return <div>{tServer("community_not_found", language)}</div>;
   }
 
   const communityConfig = new CommunityConfig(config);
@@ -86,10 +88,11 @@ function Fallback({ cardColor, logo }: { cardColor: string; logo: string }) {
 
 async function AsyncPage(props: PageProps) {
   const headersList = await headers();
+  const language = getLanguageFromHeaders(headersList);
 
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {
-    return <div>Community not found</div>;
+    return <div>{tServer("community_not_found", language)}</div>;
   }
 
   const communityConfig = new CommunityConfig(config);

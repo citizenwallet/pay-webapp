@@ -15,7 +15,7 @@ import {
 } from "@citizenwallet/sdk";
 import { getTransaction } from "@/services/pay/transactions";
 import { id, ZeroAddress } from "ethers";
-import { t } from "@/lib/i18n";
+import { t, getLanguageFromHeaders, tServer } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
 interface PageProps {
@@ -44,9 +44,12 @@ async function AsyncPage({
   hash: string;
   serialNumber: string;
 }) {
+  const headersList = await headers();
+  const language = getLanguageFromHeaders(headersList);
+
   const transaction = await getTransaction(hash);
   if (!transaction) {
-    return <div>Transaction not found</div>;
+    return <div>{tServer("transaction_not_found", language)}</div>;
   }
 
   if (!transaction) {
@@ -85,11 +88,9 @@ async function AsyncPage({
     minute: "2-digit",
   });
 
-  const headersList = await headers();
-
   const config = await getCommunityFromHeaders(headersList);
   if (!config) {
-    return <div>Community not found</div>;
+    return <div>{tServer("community_not_found", language)}</div>;
   }
 
   const communityConfig = new CommunityConfig(config);
@@ -101,7 +102,7 @@ async function AsyncPage({
 
   const cardAddress = await getCardAddress(communityConfig, id(serialNumber));
   if (!cardAddress) {
-    return <div>Card not found</div>;
+    return <div>{tServer("card_not_found", language)}</div>;
   }
 
   const withAddress =
